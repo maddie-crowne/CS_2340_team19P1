@@ -19,5 +19,6 @@ from django.urls import path, include
 
 urlpatterns = [
     path('googleMaps/', include('googleMaps.urls')),  # Ensure the trailing slash here
+    path('auth/', include('auth.urls')),  # If you decide to create a separate auth app
     path('admin/', admin.site.urls),
 ]
