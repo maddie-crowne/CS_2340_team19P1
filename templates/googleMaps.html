@@ -219,6 +219,12 @@
     }
     
     function getDirections() {
+        // Update the mode variable to get the latest value from the dropdown
+        document.getElementById("transportation-filter").addEventListener("change", function() {
+            mode = this.value;
+            console.log("Transportation mode changed to:", mode);
+        });
+    
         if (!userLocation || !selectedPlace) {
             alert("User location or destination not found!");
             return;
@@ -229,36 +235,20 @@
         directionsService = new google.maps.DirectionsService();
         directionsRenderer = new google.maps.DirectionsRenderer();
         directionsRenderer.setMap(map);
-        let request = null;
         
-        if (mode == "DRIVING") {
-            request = {
-                origin: userLocation,
-                destination: selectedPlace,
-                travelMode: google.maps.TravelMode.DRIVING
-            }
-        } if (mode == "WALKING") {
-            request = {
-                origin: userLocation,
-                destination: selectedPlace,
-                travelMode: google.maps.TravelMode.WALKING
-            }
-        } if (mode == "BICYCLING") {
-            request = {
-                origin: userLocation,
-                destination: selectedPlace,
-                travelMode: google.maps.TravelMode.BICYCLING
-            }
-        }
-    
+        let request = {
+            origin: userLocation,
+            destination: selectedPlace,
+            travelMode: google.maps.TravelMode[mode] // Use the mode directly
+        };
+        
         directionsService.route(request, function(result, status) {
             if (status === google.maps.DirectionsStatus.OK) {
                 directionsRenderer.setDirections(result);
             } else {
                 alert("Directions request failed: " + status);
             }
-    });
-
+        });
     }
     function clearMarkers() {
         markers.forEach(marker => marker.setMap(null));
