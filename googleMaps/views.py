@@ -48,8 +48,7 @@ def user_logout(request):
     return redirect('login')
 
 def account_info(request):
-    favorites = Favorite.objects.filter(user=request.user)
-    return render(request, 'account_info.html', {'favorites': favorites})
+    return render(request, 'account_info.html')
 
 
 # Create your views here.
