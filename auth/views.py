@@ -21,6 +21,10 @@ def user_login(request):
         username = request.POST['username']
         password = request.POST['password']
         user = authenticate(request, username=username, password=password)
+
+        # Debugging print statement
+        print(f"User: {user}")  # Check if user is None or a valid user object
+
         if user is not None:
             login(request, user)
             return redirect('googleMaps:googleMaps')  # Redirect to the Google Maps page
