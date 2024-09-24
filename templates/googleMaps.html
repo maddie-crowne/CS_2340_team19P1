@@ -181,6 +181,7 @@
                     selectedPlace = placeDetails.geometry.location;
                     const cuisine = document.getElementById('filter-dropdown').value;
 
+                    const photos = placeDetails.photos;
                     // Set the content of the sidebar with detailed info
                     document.getElementById('info').innerHTML = `
                         <strong>${placeDetails.name}</strong><br>
@@ -188,6 +189,16 @@
                         <strong>Phone:</strong> ${placeDetails.formatted_phone_number || 'N/A'}<br>
                         <strong>Cuisine:</strong> ${cuisine || 'N/A'}<br>
                         <strong>Rating:</strong> ${placeDetails.rating || 'N/A'}<br>
+
+                        <strong>Photos:</strong><br>
+                            ${photos.length > 0 ? photos.map(photo => {
+                                // Assuming you have a valid PlacesService instance
+                                const photoUrl = photo.getUrl({ maxWidth: 400, maxHeight: 400 });
+                                return `
+                                    <img src="${photoUrl}" alt="Photo of ${placeDetails.name}" style="width: 100%; max-width: 150px; height: auto; margin-bottom: 10px;" onerror="this.style.display='none';">
+                                `;
+                             }).join('') : 'No photos available.'}<br>
+
                         <strong>Reviews:</strong><br>
                         ${placeDetails.reviews ? placeDetails.reviews.map(review => `
                             <div>
