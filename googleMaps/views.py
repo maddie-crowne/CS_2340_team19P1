@@ -5,7 +5,6 @@ from django.contrib import messages
 from django.contrib.auth import logout
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
-from .models import Favorite
 import requests
 from django.shortcuts import redirect
 
