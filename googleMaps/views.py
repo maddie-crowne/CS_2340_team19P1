@@ -9,6 +9,7 @@ from django.contrib.auth import login
 from auth.forms import CustomUserCreationForm
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 def register(request):
     if request.method == 'POST':
@@ -16,10 +17,14 @@ def register(request):
         if form.is_valid():
             user = form.save()
             login(request, user)  # Log the user in after registration
-            return redirect('account_info')  # Redirect to the account info page after registration
+            return redirect('googleMaps:googleMaps')  # Redirect to the Google Maps page
+        else:
+            # Add an error message if the form is not valid
+            messages.error(request, 'Please correct the errors below.')
     else:
         form = CustomUserCreationForm()
     return render(request, 'register.html', {'form': form})
+
 
 
 def user_login(request):
@@ -34,12 +39,12 @@ def user_login(request):
         else:
             messages.error(request, 'Invalid username or password')
 
-    return render(request, 'registration/login.html')
+    return render(request, 'login.html')
 
 
 def user_logout(request):
     logout(request)
-    return redirect('login')
+    return redirect('googleMaps:googleMaps')
 
 @login_required
 def account_info(request):

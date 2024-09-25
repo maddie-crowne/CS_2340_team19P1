@@ -9,11 +9,17 @@ def register(request):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user)
-            return redirect('account_info')
+            login(request, user)  # Log the user in after registration
+            return redirect('googleMaps:googleMaps')  # Redirect to the Google Maps page
+        else:
+            # Iterate over form errors and add to messages
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field.capitalize()}: {error}")
     else:
         form = CustomUserCreationForm()
     return render(request, 'register.html', {'form': form})
+
 
 
 # Login view

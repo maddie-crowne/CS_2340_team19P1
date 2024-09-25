@@ -89,15 +89,15 @@ DATABASES = {
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
+    # {
+    #     'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    # },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
     },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
+    # {
+    #     'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    # },
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
@@ -129,3 +129,12 @@ API_KEY = os.environ.get('API_KEY')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 BASE_COUNTRY = 'US'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.office365.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.environ.get('OUTLOOK_EMAIL_USER')  # Set this in your environment
+EMAIL_HOST_PASSWORD = os.environ.get('OUTLOOK_EMAIL_PASSWORD')  # Set this in your environment
+DEFAULT_FROM_EMAIL = os.environ.get('OUTLOOK_EMAIL_USER')
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'

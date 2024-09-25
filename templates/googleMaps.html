@@ -62,7 +62,41 @@
             <option value="Vietnamese">Vietnamese</option>
         </select>
         <button onclick="searchRestaurants()">Search</button>
-        <a href="{% url 'auth:account_info' %}">My Account</a>
+        
+        {% if user.is_authenticated %}
+            <a href="{% url 'googleMaps:account_info' %}">My Account</a>
+            
+            <button onclick="logout()">Logout</button>
+            
+            <script>
+                function logout() {
+                    console.log("YES")
+                    fetch('/googleMaps/logout/', {  // Ensure this points to the correct path
+                        method: 'POST',
+                        credentials: 'include',
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}' // Add this line
+                        }
+                    })
+                    .then(response => {
+                        console.log("YES 2")
+                        if (response.ok) {
+                            window.location.href = '/googleMaps'; // Redirect to the desired page
+                        } else {
+                            alert('Logout failed. Please try again.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Logout failed. Please try again.');
+                    });
+                }
+        </script>
+
+        {% else %}
+            <a href="{% url 'auth:login' %}">Login</a>
+        {% endif %}
+
     </div>
     
 <div id="map"></div>
@@ -189,16 +223,15 @@
                         <strong>Phone:</strong> ${placeDetails.formatted_phone_number || 'N/A'}<br>
                         <strong>Cuisine:</strong> ${cuisine || 'N/A'}<br>
                         <strong>Rating:</strong> ${placeDetails.rating || 'N/A'}<br>
-
+                    
                         <strong>Photos:</strong><br>
-                            ${photos.length > 0 ? photos.map(photo => {
-                                // Assuming you have a valid PlacesService instance
-                                const photoUrl = photo.getUrl({ maxWidth: 400, maxHeight: 400 });
-                                return `
-                                    <img src="${photoUrl}" alt="Photo of ${placeDetails.name}" style="width: 100%; max-width: 150px; height: auto; margin-bottom: 10px;" onerror="this.style.display='none';">
-                                `;
-                             }).join('') : 'No photos available.'}<br>
-
+                        ${photos.length > 0 ? photos.slice(0, 3).map(photo => {
+                            const photoUrl = photo.getUrl({ maxWidth: 400, maxHeight: 400 });
+                            return `
+                                <img src="${photoUrl}" alt="Photo of ${placeDetails.name}" style="width: 100%; max-width: 150px; height: auto; margin-bottom: 10px;" onerror="this.style.display='none';">
+                            `;
+                        }).join('') : 'No photos available.'}<br>
+                    
                         <strong>Reviews:</strong><br>
                         ${placeDetails.reviews ? placeDetails.reviews.map(review => `
                             <div>
@@ -224,24 +257,24 @@
             mode = this.value;
             console.log("Transportation mode changed to:", mode);
         });
-    
+
         if (!userLocation || !selectedPlace) {
             alert("User location or destination not found!");
             return;
         }
-        
+
         clearDirections();
-        
+
         directionsService = new google.maps.DirectionsService();
         directionsRenderer = new google.maps.DirectionsRenderer();
         directionsRenderer.setMap(map);
-        
+
         let request = {
             origin: userLocation,
             destination: selectedPlace,
             travelMode: google.maps.TravelMode[mode] // Use the mode directly
         };
-        
+
         directionsService.route(request, function(result, status) {
             if (status === google.maps.DirectionsStatus.OK) {
                 directionsRenderer.setDirections(result);
