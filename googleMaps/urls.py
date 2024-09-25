@@ -2,6 +2,9 @@ from django.urls import path
 from . import views
 
 app_name = 'googleMaps'  # Namespacing the app for better URL organization
+from django.urls import path
+from . import views
+
 urlpatterns = [
     path('', views.googleMaps, name='googleMaps'),
     path('register/', views.register, name='register'),
