@@ -39,7 +39,7 @@ def user_login(request):
 
 def user_logout(request):
     logout(request)
-    return redirect('login')
+    return redirect('googleMaps:googleMaps')
 
 @login_required
 def account_info(request):
