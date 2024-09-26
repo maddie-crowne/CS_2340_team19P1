@@ -57,7 +57,12 @@
 
 <div style="padding: 10px;">
     <input id="search-bar" type="text" placeholder="Search for restaurants...">
-    <input type="number" id="max-distance" name="max-distance" min="500" step="500" value="5000">
+    <select id="max-distance" name="max-distance">
+            <option value="1609.34">1 mile</option>
+            <option value="8046.72">5 miles</option>
+            <option value="16093.4">10 miles</option>
+            <option value="24140.2">15 miles</option>
+    </select>
     <input type="number" id="min-rating" name="min-rating" min="1" max="5" step="0.1" value="4.0">
     <button onclick="searchRestaurants()">Search</button>
     {% if user.is_authenticated %}
@@ -298,10 +303,10 @@
         restaurantItem.innerHTML = `
             <strong>${place.name}</strong><br>
             Rating: ${place.rating || 'N/A'}<br>
-            Distance: ${Math.round(google.maps.geometry.spherical.computeDistanceBetween(
+            Distance: ${(Math.round(google.maps.geometry.spherical.computeDistanceBetween(
                 place.geometry.location,
                 userLocation || map.getCenter()
-            ))} meters
+            )) / 1609.34).toFixed(2)} miles
         `;
 
         // When clicking on the sidebar item, it simulates clicking the map marker
