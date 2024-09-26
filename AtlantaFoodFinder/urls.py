@@ -16,9 +16,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
-    path('googleMaps/', include('googleMaps.urls')),  # Ensure the trailing slash here
-    path('auth/', include('auth.urls')),  # If you decide to create a separate auth app
+    path('googleMaps/', include('googleMaps.urls')),
+    path('auth/', include('auth.urls')),
     path('admin/', admin.site.urls),
+
+    # Include all auth URLs
+    path('auth/password_reset/', auth_views.PasswordResetView.as_view(template_name='password_reset_form.html'), name='password_reset'),
+    path('auth/password_reset/done/', auth_views.PasswordResetDoneView.as_view(template_name='password_reset_done.html'), name='password_reset_done'),
+    path('auth/password_reset_confirm/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='password_reset_confirm.html'), name='password_reset_confirm'),
+    path('auth/password_reset_complete/', auth_views.PasswordResetCompleteView.as_view(template_name='password_reset_complete.html'), name='password_reset_complete'),
 ]
+
