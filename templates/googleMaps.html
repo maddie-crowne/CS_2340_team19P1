@@ -138,6 +138,8 @@
 
         // Initial search for restaurants
         searchRestaurants();
+        
+        {#clearSidebar()#}
     }
 
     if (navigator.geolocation) {
@@ -253,7 +255,7 @@
                     //document.getElementById('sidebar').style.display = 'block';
                     document.getElementById('restaurant-info').style.display = 'block';
                     document.getElementById('restaurant-info').style.width = '30%';
-                    document.getElementById('sidebar').style.width = '0%';
+                    document.getElementById('sidebar').style.display = 'none';
                     document.getElementById('map').style.width = '70%';
                     document.getElementById('get-directions-btn').style.display = 'block';
                 } else {
@@ -346,7 +348,7 @@
                     //document.getElementById('sidebar').style.display = 'block';
                 document.getElementById('restaurant-info').style.display = 'block';
                 document.getElementById('restaurant-info').style.width = '30%';
-                document.getElementById('sidebar').style.width = '0%';
+                document.getElementById('sidebar').style.display = 'none';
                 document.getElementById('map').style.width = '70%';
                 document.getElementById('get-directions-btn').style.display = 'block';
             });
@@ -364,8 +366,12 @@
 
     // Function to clear sidebar content
     function clearSidebar() {
-        document.getElementById('restaurant-list').innerHTML = '';
+        document.getElementById('restaurant-list').innerHTML = `
+        <p>Search for restaurants or cuisines in the search bar. Results will appear here!</p>
+    `;
     }
+    
+    
     function clearInfo() {
         document.getElementById('info').innerHTML = '';
     }
