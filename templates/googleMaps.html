@@ -207,8 +207,12 @@
         });
     }
 
+    function capitalizeFirstLetter(string) {
+        if (typeof string !== 'string') return string; // Ensure it's a string
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
     
-function createMarker(place) {
+    function createMarker(place) {
     const marker = new google.maps.Marker({
         map: map,
         position: place.geometry.location
@@ -226,7 +230,7 @@ function createMarker(place) {
                 const photos = placeDetails.photos;
 
                 let cuisinesList = [];
-               const cuisines = [
+                const cuisines = [
                     'Italian', 'Chinese', 'Mexican', 'Indian', 'Thai', 'Japanese',
                     'American', 'Mediterranean', 'French', 'Greek', 'Vietnamese',
                     'Spanish', 'Korean', 'BBQ', 'Seafood', 'Dessert', 'Vegetarian',
@@ -240,9 +244,9 @@ function createMarker(place) {
                     'Egyptian', 'Algerian', 'Jamaican', 'Puerto Rican', 
                     'Cuban', 'Haitian', 'Mexican-American', 'Tex-Mex', 'Vegan',
                     'Raw', 'Fusion', 'Street Food', 'Comfort Food', 'Fast Food', 
-                    'Cafe', 'Bar', 'Restaurant', 'Seafood',
+                    'Cafe', 'Bar', 'Restaurant', 'Seafood', 'Sushi', 'Taco',
+                    'Soul Food', 'Deli', 'Mexican-American'
                 ];
-
 
                 const atlantaLocation = { lat: 33.7490, lng: -84.3880 };
 
@@ -261,11 +265,13 @@ function createMarker(place) {
                                     result.name.toLowerCase() === placeDetails.name.toLowerCase()
                                 );
 
-                                if (matchedResults.length > 0) {
+                                const nameContainsCuisine = placeDetails.name.toLowerCase().includes(cuisine.toLowerCase());
+
+                                if (matchedResults.length > 0 || nameContainsCuisine) {
                                     cuisinesList.push(cuisine);
                                 }
                             } else {
-                                console.log(`Error fetching results for ${cuisine}:`, status); // Log error for this cuisine
+                                console.log(`Error fetching results for ${cuisine}:`, status);
                             }
                             resolve();
                         });
@@ -273,13 +279,20 @@ function createMarker(place) {
                 });
 
                 Promise.all(cuisinePromises).then(() => {
-                    // Set the content of the sidebar with detailed info
+                    // Fallback to types if no cuisines found
+                    const fallbackTypes = placeDetails.types.filter(type => 
+                        ['restaurant', 'bar', 'cafe'].includes(type)
+                    );
+
+                    const cuisinesOutput = cuisinesList.length > 0 ? cuisinesList.join(', ') : 
+                        (fallbackTypes.length > 0 ? fallbackTypes.map(capitalizeFirstLetter).join(', ') : 'N/A');
+
                     document.getElementById('info').innerHTML = `
                         <strong>${placeDetails.name}</strong><br>
                         <strong>Address:</strong> ${placeDetails.formatted_address || 'N/A'}<br>
                         <strong>Phone:</strong> ${placeDetails.formatted_phone_number || 'N/A'}<br>
                         <strong>Rating:</strong> ${placeDetails.rating || 'N/A'}<br>
-                        <strong>Cuisines:</strong> ${cuisinesList.length > 0 ? cuisinesList.join(', ') : 'N/A'}<br>
+                        <strong>Cuisines:</strong> ${cuisinesOutput}<br>
                         <strong>Photos:</strong><br>
                             ${photos.length > 0 ? photos.slice(0, 3).map(photo => {
                                 const photoUrl = photo.getUrl({ maxWidth: 400, maxHeight: 400 });
@@ -314,66 +327,6 @@ function createMarker(place) {
 }
 
 
-
-
-
-    
-    // Function to create markers and add them to the map
-    {#function createMarker(place) {#}
-    {#    const marker = new google.maps.Marker({#}
-    {#        map: map,#}
-    {#        position: place.geometry.location#}
-    {#    });#}
-    {##}
-    {#    markers.push(marker);#}
-    {#    addToSidebar(place);#}
-    {##}
-    {#    // Add click event to marker to navigate to another page with restaurant info#}
-    {#    google.maps.event.addListener(marker, 'click', function() {#}
-    {#        clearDirections();#}
-    {#        back();#}
-    {#        service.getDetails({ placeId: place.place_id }, function(placeDetails, status) {#}
-    {#            if (status === google.maps.places.PlacesServiceStatus.OK) {#}
-    {#                selectedPlace = placeDetails.geometry.location;#}
-    {#                const photos = placeDetails.photos;#}
-    {#                // Set the content of the sidebar with detailed info#}
-    {#                console.log(placeDetails.name);#}
-    {#                document.getElementById('info').innerHTML = `#}
-    {#                    <strong>${placeDetails.name}</strong><br>#}
-    {#                    <strong>Address:</strong> ${placeDetails.formatted_address || 'N/A'}<br>#}
-    {#                    <strong>Phone:</strong> ${placeDetails.formatted_phone_number || 'N/A'}<br>#}
-    {#                    <strong>Rating:</strong> ${placeDetails.rating || 'N/A'}<br>#}
-    {#                    <strong>Photos:</strong><br>#}
-    {#                        ${photos.length > 0 ? photos.slice(0, 3).map(photo => {#}
-    {#                        const photoUrl = photo.getUrl({ maxWidth: 400, maxHeight: 400 });#}
-    {#                        return `#}
-    {#                            <img src="${photoUrl}" alt="Photo of ${placeDetails.name}" style="width: 100%; max-width: 150px; height: auto; margin-bottom: 10px;" onerror="this.style.display='none';">#}
-    {#                        `;#}
-    {#                    }).join('') : 'No photos available.'}<br>#}
-    {##}
-    {#                    <strong>Reviews:</strong><br>#}
-    {#                    ${placeDetails.reviews ? placeDetails.reviews.map(review => `#}
-    {#                        <div>#}
-    {#                            <strong>${review.author_name}</strong><br>#}
-    {#                            Rating: ${review.rating}<br>#}
-    {#                            ${review.text}<br><br>#}
-    {#                        </div>#}
-    {#                    `).join('') : 'No reviews available.'}#}
-    {#                `;#}
-    {##}
-    {#                // Show the sidebar#}
-    {#                //document.getElementById('sidebar').style.display = 'block';#}
-    {#                document.getElementById('restaurant-info').style.display = 'block';#}
-    {#                document.getElementById('restaurant-info').style.width = '30%';#}
-    {#                document.getElementById('sidebar').style.display = 'none';#}
-    {#                document.getElementById('map').style.width = '70%';#}
-    {#                document.getElementById('get-directions-btn').style.display = 'block';#}
-    {#            } else {#}
-    {#                console.log("didn't work")#}
-    {#            }#}
-    {#        });#}
-    {#    });#}
-    {# }#}
     function getDirections() {
         // Update the mode variable to get the latest value from the dropdown
         document.getElementById("transportation-filter").addEventListener("change", function() {
