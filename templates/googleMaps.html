@@ -1,8 +1,10 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
     <title>Restaurants in Atlanta</title>
     <script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=places,geometry&callback=initMap" async defer></script>
+    <script src="{% static 'favorites.js' %}"></script>
     <style>
         html, body {
             height: 100%;
@@ -72,7 +74,6 @@
             
             <script>
                 function logout() {
-                    console.log("YES")
                     fetch('/googleMaps/logout/', {  // Ensure this points to the correct path
                         method: 'POST',
                         credentials: 'include',
@@ -81,7 +82,6 @@
                         }
                     })
                     .then(response => {
-                        console.log("YES 2")
                         if (response.ok) {
                             window.location.href = '/googleMaps'; // Redirect to the desired page
                         } else {
@@ -212,176 +212,166 @@
     }
     
     function createMarker(place) {
-    const marker = new google.maps.Marker({
-        map: map,
-        position: place.geometry.location
-    });
-
-    markers.push(marker);
-    addToSidebar(place);
-
-    google.maps.event.addListener(marker, 'click', function() {
-        clearDirections();
-        back();
-        service.getDetails({ placeId: place.place_id }, function(placeDetails, status) {
-            if (status === google.maps.places.PlacesServiceStatus.OK) {
-                selectedPlace = placeDetails.geometry.location;
-                const photos = placeDetails.photos;
-
-                let cuisinesList = [];
-                const cuisines = [
-                    'Italian', 'Chinese', 'Mexican', 'Indian', 'Thai', 'Japanese',
-                    'American', 'Mediterranean', 'French', 'Greek', 'Vietnamese',
-                    'Spanish', 'Korean', 'BBQ', 'Seafood', 'Dessert', 'Vegetarian',
-                    'Middle Eastern', 'Himalayan', 'Cajun', 'Creole', 'Irish', 
-                    'Turkish', 'Brazilian', 'Caribbean', 'African', 'Peruvian', 
-                    'Filipino', 'Russian', 'Scottish', 'Dutch', 'German', 
-                    'Polish', 'Hungarian', 'Swiss', 'Belgian', 'Austrian',
-                    'Norwegian', 'Danish', 'Finnish', 'Icelandic', 'Sri Lankan',
-                    'Malaysian', 'Indonesian', 'Singaporean', 'Laotian', 
-                    'Cambodian', 'Mongolian', 'Somalian', 'Afghan', 'Tunisian', 
-                    'Egyptian', 'Algerian', 'Jamaican', 'Puerto Rican', 
-                    'Cuban', 'Haitian', 'Mexican-American', 'Tex-Mex', 'Vegan',
-                    'Fusion', 'Street Food', 'Comfort Food', 'Fast Food', 
-                    'Cafe', 'Bar', 'Sushi', 'Taco', 'Soul Food', 'Deli',
-                    'Halal'
-                ];
-
-                const atlantaLocation = { lat: 33.7490, lng: -84.3880 };
-
-                const cuisinePromises = cuisines.map(cuisine => {
-                    return new Promise((resolve) => {
-                        let request = {
-                            location: atlantaLocation,
-                            radius: '24141',
-                            type: ['restaurant'],
-                            keyword: cuisine
-                        };
-
-                        service.nearbySearch(request, function(results, status) {
-                            if (status === google.maps.places.PlacesServiceStatus.OK) {
-                                const matchedResults = results.filter(result => 
-                                    result.name.toLowerCase() === placeDetails.name.toLowerCase()
-                                );
-
-                                const nameContainsCuisine = placeDetails.name.toLowerCase().includes(cuisine.toLowerCase());
-
-                                if (matchedResults.length > 0 || nameContainsCuisine) {
-                                    cuisinesList.push(cuisine);
-                                }
-                            } else {
-                                console.log(`Error fetching results for ${cuisine}:`, status);
-                            }
-                            resolve();
-                        });
-                        
-                        request = {
-                            location: atlantaLocation,
-                            radius: '24141',
-                            type: ['bar'],
-                            keyword: cuisine
-                        };
-
-                        service.nearbySearch(request, function(results, status) {
-                            if (status === google.maps.places.PlacesServiceStatus.OK) {
-                                const matchedResults = results.filter(result => 
-                                    result.name.toLowerCase() === placeDetails.name.toLowerCase()
-                                );
-
-                                const nameContainsCuisine = placeDetails.name.toLowerCase().includes(cuisine.toLowerCase());
-
-                                if ((matchedResults.length > 0 || nameContainsCuisine) && !cuisinesList.includes(cuisine)) {
-                                    cuisinesList.push(cuisine);
-                                }
-                            } else {
-                                console.log(`Error fetching results for ${cuisine}:`, status);
-                            }
-                            resolve();
-                        });
-                        
-                        request = {
-                            location: atlantaLocation,
-                            radius: '24141',
-                            type: ['cafe'],
-                            keyword: cuisine
-                        };
-
-                        service.nearbySearch(request, function(results, status) {
-                            if (status === google.maps.places.PlacesServiceStatus.OK) {
-                                const matchedResults = results.filter(result => 
-                                    result.name.toLowerCase() === placeDetails.name.toLowerCase()
-                                );
-
-                                const nameContainsCuisine = placeDetails.name.toLowerCase().includes(cuisine.toLowerCase());
-
-                                if ((matchedResults.length > 0 || nameContainsCuisine) && !cuisinesList.includes(cuisine)) {
-                                    cuisinesList.push(cuisine);
-                                }
-                            } else {
-                                console.log(`Error fetching results for ${cuisine}:`, status);
-                            }
-                            resolve();
-                        });
-                        
-                        
-                        
-                    });
-                });
-
-                Promise.all(cuisinePromises).then(() => {
-                    // Fallback to types if no cuisines found
-                    const fallbackTypes = placeDetails.types.filter(type => 
-                        ['restaurant', 'bar', 'cafe'].includes(type)
-                    );
-
-                    const cuisinesOutput = cuisinesList.length > 0 ? cuisinesList.join(', ') : 
-                        (fallbackTypes.length > 0 ? fallbackTypes.map(capitalizeFirstLetter).join(', ') : 'N/A');
-
-                    document.getElementById('info').innerHTML = `
-                        <strong>${placeDetails.name}</strong><br>
-                        <strong>Address:</strong> ${placeDetails.formatted_address || 'N/A'}<br>
-                        <strong>Phone:</strong> ${placeDetails.formatted_phone_number || 'N/A'}<br>
-                        <strong>Rating:</strong> ${placeDetails.rating || 'N/A'}<br>
-                        <strong>Cuisines:</strong> ${cuisinesOutput}<br>
-                        <strong>Photos:</strong><br>
-                            ${photos.length > 0 ? photos.slice(0, 3).map(photo => {
-                                const photoUrl = photo.getUrl({ maxWidth: 400, maxHeight: 400 });
-                                return `
-                                    <img src="${photoUrl}" alt="Photo of ${placeDetails.name}" style="width: 100%; max-width: 150px; height: auto; margin-bottom: 10px;" onerror="this.style.display='none';">
-                                `;
-                            }).join('') : 'No photos available.'}<br>
-
-                        <strong>Reviews:</strong><br>
-                        ${placeDetails.reviews ? placeDetails.reviews.map(review => `
-                            <div>
-                                <strong>${review.author_name}</strong><br>
-                                Rating: ${review.rating}<br>
-                                ${review.text}<br><br>
-                            </div>
-                        `).join('') : 'No reviews available.'}
-                    `;
-
-                    // Show the sidebar
-                    document.getElementById('restaurant-info').style.display = 'block';
-                    document.getElementById('restaurant-info').style.width = '30%';
-                    document.getElementById('sidebar').style.display = 'none';
-                    document.getElementById('map').style.width = '70%';
-                    document.getElementById('get-directions-btn').style.display = 'block';
-                });
-
-            } else {
-                console.log("Error fetching place details:", status);
-            }
+        const marker = new google.maps.Marker({
+            map: map,
+            position: place.geometry.location
         });
-    });
-}
+    
+        markers.push(marker);
+        addToSidebar(place);
+
+        google.maps.event.addListener(marker, 'click', function() {
+            clearDirections();
+            back();
+            service.getDetails({ placeId: place.place_id }, function(placeDetails, status) {
+                if (status === google.maps.places.PlacesServiceStatus.OK) {
+                    selectedPlace = placeDetails.geometry.location;
+                    const photos = placeDetails.photos;
+                    let cuisinesList = [];
+                    const cuisines = [
+                        'Italian', 'Chinese', 'Mexican', 'Indian', 'Thai', 'Japanese',
+                        'American', 'Mediterranean', 'French', 'Greek', 'Vietnamese',
+                        'Spanish', 'Korean', 'BBQ', 'Seafood', 'Dessert', 'Vegetarian',
+                        'Middle Eastern', 'Himalayan', 'Cajun', 'Creole', 'Irish', 
+                        'Turkish', 'Brazilian', 'Caribbean', 'African', 'Peruvian', 
+                        'Filipino', 'Russian', 'Scottish', 'Dutch', 'German', 
+                        'Polish', 'Hungarian', 'Swiss', 'Belgian', 'Austrian',
+                        'Norwegian', 'Danish', 'Finnish', 'Icelandic', 'Sri Lankan',
+                        'Malaysian', 'Indonesian', 'Singaporean', 'Laotian', 
+                        'Cambodian', 'Mongolian', 'Somalian', 'Afghan', 'Tunisian', 
+                        'Egyptian', 'Algerian', 'Jamaican', 'Puerto Rican', 
+                        'Cuban', 'Haitian', 'Mexican-American', 'Tex-Mex', 'Vegan',
+                        'Fusion', 'Street Food', 'Comfort Food', 'Fast Food', 
+                        'Cafe', 'Bar', 'Sushi', 'Taco', 'Soul Food', 'Deli',
+                        'Halal'
+                    ];
+    
+                    const atlantaLocation = { lat: 33.7490, lng: -84.3880 };
+    
+                    const cuisinePromises = cuisines.map(cuisine => {
+                        return new Promise((resolve) => {
+                            let request = {
+                                location: atlantaLocation,
+                                radius: '24141',
+                                type: ['restaurant'],
+                                keyword: cuisine
+                            };
+    
+                            service.nearbySearch(request, function(results, status) {
+                                if (status === google.maps.places.PlacesServiceStatus.OK) {
+                                    const matchedResults = results.filter(result => 
+                                        result.name.toLowerCase() === placeDetails.name.toLowerCase()
+                                    );
+    
+                                    const nameContainsCuisine = placeDetails.name.toLowerCase().includes(cuisine.toLowerCase());
+    
+                                    if (matchedResults.length > 0 || nameContainsCuisine) {
+                                        cuisinesList.push(cuisine);
+                                    }
+                                }
+                                resolve();
+                            });
+                            
+                            request = {
+                                location: atlantaLocation,
+                                radius: '24141',
+                                type: ['bar'],
+                                keyword: cuisine
+                            };
+    
+                            service.nearbySearch(request, function(results, status) {
+                                if (status === google.maps.places.PlacesServiceStatus.OK) {
+                                    const matchedResults = results.filter(result => 
+                                        result.name.toLowerCase() === placeDetails.name.toLowerCase()
+                                    );
+    
+                                    const nameContainsCuisine = placeDetails.name.toLowerCase().includes(cuisine.toLowerCase());
+    
+                                    if ((matchedResults.length > 0 || nameContainsCuisine) && !cuisinesList.includes(cuisine)) {
+                                        cuisinesList.push(cuisine);
+                                    }
+                                }
+                                resolve();
+                            });
+                            
+                            request = {
+                                location: atlantaLocation,
+                                radius: '24141',
+                                type: ['cafe'],
+                                keyword: cuisine
+                            };
+    
+                            service.nearbySearch(request, function(results, status) {
+                                if (status === google.maps.places.PlacesServiceStatus.OK) {
+                                    const matchedResults = results.filter(result => 
+                                        result.name.toLowerCase() === placeDetails.name.toLowerCase()
+                                    );
+    
+                                    const nameContainsCuisine = placeDetails.name.toLowerCase().includes(cuisine.toLowerCase());
+    
+                                    if ((matchedResults.length > 0 || nameContainsCuisine) && !cuisinesList.includes(cuisine)) {
+                                        cuisinesList.push(cuisine);
+                                    }
+                                }
+                                resolve();
+                            });
+                            
+                            
+                            
+                        });
+                    });
+    
+                    Promise.all(cuisinePromises).then(() => {
+                        // Fallback to types if no cuisines found
+                        const fallbackTypes = placeDetails.types.filter(type => 
+                            ['restaurant', 'bar', 'cafe'].includes(type)
+                        );
+    
+                        const cuisinesOutput = cuisinesList.length > 0 ? cuisinesList.join(', ') : 
+                            (fallbackTypes.length > 0 ? fallbackTypes.map(capitalizeFirstLetter).join(', ') : 'N/A');
+    
+                        document.getElementById('info').innerHTML = `
+                            <strong>${placeDetails.name}</strong><br>
+                            <button onclick="favoriteRestaurant('${placeDetails.place_id}')">Favorite</button><br>
+                            <strong>Address:</strong> ${placeDetails.formatted_address || 'N/A'}<br>
+                            <strong>Phone:</strong> ${placeDetails.formatted_phone_number || 'N/A'}<br>
+                            <strong>Rating:</strong> ${placeDetails.rating || 'N/A'}<br>
+                            <strong>Cuisines:</strong> ${cuisinesOutput}<br>
+                            <strong>Photos:</strong><br>
+                                ${photos.length > 0 ? photos.slice(0, 3).map(photo => {
+                                    const photoUrl = photo.getUrl({ maxWidth: 400, maxHeight: 400 });
+                                    return `
+                                        <img src="${photoUrl}" alt="Photo of ${placeDetails.name}" style="width: 100%; max-width: 150px; height: auto; margin-bottom: 10px;" onerror="this.style.display='none';">
+                                    `;
+                                }).join('') : 'No photos available.'}<br>
+    
+                            <strong>Reviews:</strong><br>
+                            ${placeDetails.reviews ? placeDetails.reviews.map(review => `
+                                <div>
+                                    <strong>${review.author_name}</strong><br>
+                                    Rating: ${review.rating}<br>
+                                    ${review.text}<br><br>
+                                </div>
+                            `).join('') : 'No reviews available.'}
+                        `;
+    
+                        // Show the sidebar
+                        document.getElementById('restaurant-info').style.display = 'block';
+                        document.getElementById('restaurant-info').style.width = '30%';
+                        document.getElementById('sidebar').style.display = 'none';
+                        document.getElementById('map').style.width = '70%';
+                        document.getElementById('get-directions-btn').style.display = 'block';
+                    });
+                }
+            });
+        });
+    }
 
 
     function getDirections() {
         // Update the mode variable to get the latest value from the dropdown
         document.getElementById("transportation-filter").addEventListener("change", function() {
             mode = this.value;
-            console.log("Transportation mode changed to:", mode);
         });
 
         if (!userLocation || !selectedPlace) {
@@ -421,8 +411,7 @@
             Distance: ${(Math.round(google.maps.geometry.spherical.computeDistanceBetween(
                 place.geometry.location,
                 userLocation || map.getCenter()
-            )) / 1609.34).toFixed(2)} miles
-        `;
+            )) / 1609.34).toFixed(2)} miles`;
 
         // When clicking on the sidebar item, it simulates clicking the map marker
        restaurantItem.addEventListener('click', function() {
@@ -472,8 +461,6 @@
                                 if (matchedResults.length > 0 || nameContainsCuisine) {
                                     cuisinesList.push(cuisine);
                                 }
-                            } else {
-                                console.log(`Error fetching results for ${cuisine}:`, status);
                             }
                             resolve();
                         });
@@ -496,8 +483,6 @@
                                 if ((matchedResults.length > 0 || nameContainsCuisine) && !cuisinesList.includes(cuisine)) {
                                     cuisinesList.push(cuisine);
                                 }
-                            } else {
-                                console.log(`Error fetching results for ${cuisine}:`, status);
                             }
                             resolve();
                         });
@@ -520,8 +505,6 @@
                                 if ((matchedResults.length > 0 || nameContainsCuisine) && !cuisinesList.includes(cuisine)) {
                                     cuisinesList.push(cuisine);
                                 }
-                            } else {
-                                console.log(`Error fetching results for ${cuisine}:`, status);
                             }
                             resolve();
                         });
@@ -542,6 +525,7 @@
 
                     document.getElementById('info').innerHTML = `
                         <strong>${placeDetails.name}</strong><br>
+                        <button onclick="favoriteRestaurant('${placeDetails.place_id}')">Favorite</button><br>
                         <strong>Address:</strong> ${placeDetails.formatted_address || 'N/A'}<br>
                         <strong>Phone:</strong> ${placeDetails.formatted_phone_number || 'N/A'}<br>
                         <strong>Rating:</strong> ${placeDetails.rating || 'N/A'}<br>
@@ -607,6 +591,36 @@
         document.getElementById("restaurant-info").style.width = '0%';
         document.getElementById("info").innerHTML = '';
     }
+    
+    const csrfToken = getCookie('csrftoken');
+
+    function favoriteRestaurant(placeId) {
+    getCurrentUserId().then(userId => {
+        if (!userId) {
+            alert('You must be logged in to favorite a restaurant.');
+            return;
+        }
+
+        fetch('api/favorite/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken, // Make sure csrfToken is defined
+            },
+            body: JSON.stringify({ placeId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Restaurant added to favorites!');
+            } else {
+                alert('Error favoriting restaurant: ' + data.message);
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    });
+}
+
 </script>
 
 </body>
