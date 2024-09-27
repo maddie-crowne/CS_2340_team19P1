@@ -125,6 +125,7 @@
     let selectedPlace = null;
     let directionsRenderer = null;
     let mode = document.getElementById("transportation-filter").value;
+    let maxDistance = 24142;
 
     // Initialize and add the map
     function initMap() {
@@ -172,7 +173,7 @@
         back();
 
         const searchTerm = document.getElementById('search-bar').value || 'restaurant';
-        const maxDistance = parseFloat(document.getElementById('max-distance').value);
+        maxDistance = parseFloat(document.getElementById('max-distance').value);
         const minRating = parseFloat(document.getElementById('min-rating').value);
 
         const request = {
@@ -243,16 +244,17 @@
                         'Cuban', 'Haitian', 'Mexican-American', 'Tex-Mex', 'Vegan',
                         'Fusion', 'Street Food', 'Comfort Food', 'Fast Food',
                         'Cafe', 'Bar', 'Sushi', 'Taco', 'Soul Food', 'Deli',
-                        'Halal'
+                        'Halal', 'Pizza',
                     ];
 
                     const atlantaLocation = { lat: 33.7490, lng: -84.3880 };
+                    checkIfFavorited(placeDetails.place_id);
 
                     const cuisinePromises = cuisines.map(cuisine => {
                         return new Promise((resolve) => {
                             let request = {
                                 location: atlantaLocation,
-                                radius: '24141',
+                                radius: maxDistance,
                                 type: ['restaurant'],
                                 keyword: cuisine
                             };
@@ -296,7 +298,7 @@
 
                             request = {
                                 location: atlantaLocation,
-                                radius: '24141',
+                                radius: maxDistance,
                                 type: ['cafe'],
                                 keyword: cuisine
                             };
@@ -332,7 +334,9 @@
 
                         document.getElementById('info').innerHTML = `
                             <strong>${placeDetails.name}</strong><br>
-                            <button onclick="favoriteRestaurant('${placeDetails.place_id}')">Favorite</button><br>
+                            <button id="favorite-button" onclick="favoriteRestaurant('${placeDetails.place_id}')">
+                                ${favoriteState ? 'Unfavorite' : 'Favorite'}
+                            </button><br>
                             <strong>Address:</strong> ${placeDetails.formatted_address || 'N/A'}<br>
                             <strong>Phone:</strong> ${placeDetails.formatted_phone_number || 'N/A'}<br>
                             <strong>Rating:</strong> ${placeDetails.rating || 'N/A'}<br>
@@ -436,10 +440,11 @@
                     'Cuban', 'Haitian', 'Mexican-American', 'Tex-Mex', 'Vegan',
                     'Fusion', 'Street Food', 'Comfort Food', 'Fast Food', 
                     'Cafe', 'Bar', 'Sushi', 'Taco', 'Soul Food', 'Deli',
-                    'Halal'
+                    'Halal', 'Pizza',
                 ];
 
                 const atlantaLocation = { lat: 33.7490, lng: -84.3880 };
+                checkIfFavorited(placeDetails.place_id);
 
                 const cuisinePromises = cuisines.map(cuisine => {
                     return new Promise((resolve) => {
@@ -525,7 +530,9 @@
 
                     document.getElementById('info').innerHTML = `
                         <strong>${placeDetails.name}</strong><br>
-                        <button onclick="favoriteRestaurant('${placeDetails.place_id}')">Favorite</button><br>
+                        <button id="favorite-button" onclick="favoriteRestaurant('${placeDetails.place_id}')">
+                            ${favoriteState ? 'Unfavorite' : 'Favorite'}
+                        </button><br>
                         <strong>Address:</strong> ${placeDetails.formatted_address || 'N/A'}<br>
                         <strong>Phone:</strong> ${placeDetails.formatted_phone_number || 'N/A'}<br>
                         <strong>Rating:</strong> ${placeDetails.rating || 'N/A'}<br>
@@ -591,6 +598,7 @@
     }
 
     const csrfToken = getCookie('csrftoken');
+    let favoriteState = false; // Initialize favorite state
 
     function favoriteRestaurant(placeId) {
         getCurrentUserId().then(userId => {
@@ -599,8 +607,11 @@
                 return;
             }
     
-            fetch('api/favorite/', {
-                method: 'POST',
+            const method = favoriteState ? 'DELETE' : 'POST'; // Change method based on state
+            const endpoint = favoriteState ? `api/unfavorite/${placeId}/` : 'api/favorite/';
+    
+            fetch(endpoint, {
+                method: method,
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRFToken': csrfToken, // Make sure csrfToken is defined
@@ -610,14 +621,36 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert('Restaurant added to favorites!');
+                    favoriteState = !favoriteState; // Toggle favorite state
+                    updateFavoriteButton();
+                    alert(favoriteState ? 'Restaurant added to favorites!' : 'Restaurant removed from favorites!');
                 } else {
-                    alert('Error favoriting restaurant: ' + data.message);
+                    alert('Error updating favorite status: ' + data.message);
                 }
             })
             .catch(error => console.error('Error:', error));
         });
     }
+    
+    function updateFavoriteButton() {
+        const button = document.getElementById('favorite-button'); // Adjust to your button's ID
+        button.textContent = favoriteState ? 'Unfavorite' : 'Favorite';
+    }
+    
+    function checkIfFavorited(placeId) {
+        fetch(`/api/is_favorited/${placeId}/`) // Create an endpoint to check if a restaurant is favorited
+            .then(response => response.json())
+            .then(data => {
+                favoriteState = data.isFavorited; // Set the favorite state based on server response
+                updateFavoriteButton(); // Update the button text
+            })
+            .catch(error => console.error('Error checking favorite state:', error));
+    }
+    
+    checkIfFavorited(placeDetails.place_id);
+
+    
+    
 
 </script>
 

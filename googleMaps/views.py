@@ -6,6 +6,7 @@ from django.http import JsonResponse
 import requests
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
+from django.views.decorators.http import require_http_methods
 from auth.forms import CustomUserCreationForm
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
@@ -79,7 +80,7 @@ from django.contrib.auth.decorators import login_required
 logger = logging.getLogger(__name__)
 
 @login_required
-def favorite_restaurant(request):
+def favorite(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
@@ -105,3 +106,13 @@ def favorite_restaurant(request):
             return JsonResponse({'success': False, 'message': str(e)}, status=500)
 
     return JsonResponse({'success': False, 'message': 'Invalid request'}, status=400)
+
+@require_http_methods(["DELETE"])
+@login_required
+def unfavorite(request, place_id):
+    try:
+        favorite = Favorite.objects.get(user=request.user, place_id=place_id)
+        favorite.delete()
+        return JsonResponse({'success': True})
+    except Favorite.DoesNotExist:
+        return JsonResponse({'success': False, 'message': 'Favorite not found.'})
