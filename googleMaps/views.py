@@ -116,3 +116,10 @@ def unfavorite(request, place_id):
         return JsonResponse({'success': True})
     except Favorite.DoesNotExist:
         return JsonResponse({'success': False, 'message': 'Favorite not found.'})
+
+@login_required  # Ensure the user is logged in
+def is_favorited(request, place_id):
+    user = request.user
+    # Check if the place_id is in the user's favorites
+    is_favorited = Favorite.objects.filter(user=user, place_id=place_id).exists()
+    return JsonResponse({'isFavorited': is_favorited})
