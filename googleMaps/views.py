@@ -9,7 +9,7 @@ from django.contrib.auth import login
 from auth.forms import CustomUserCreationForm
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from .models import Favorite
+from googleMaps.models import Favorite
 
 
 def register(request):
@@ -52,6 +52,8 @@ def account_info(request):
     if request.user.is_authenticated:
         favorites = Favorite.objects.filter(user=request.user)
         return render(request, 'account_info.html', {'user': request.user, 'favorites': favorites})
+    else:
+        return redirect('auth:login')  # Redirect to login if not authenticated
 
 
 def googleMaps(request):
@@ -86,13 +88,20 @@ def favorite_restaurant(request):
             if not place_id:
                 return JsonResponse({'success': False, 'message': 'Place ID is required.'}, status=400)
 
-            Favorite.objects.create(user=request.user, place_id=place_id)
+            # Check if the restaurant is already favorited
+            favorite, created = Favorite.objects.get_or_create(user=request.user, place_id=place_id)
 
-            return JsonResponse({'success': True, 'message': 'Restaurant favorited!'})
+            if created:
+                return JsonResponse({'success': True, 'message': 'Restaurant favorited!'})
+            else:
+                # If it exists, delete it (unfavorite)
+                favorite.delete()
+                return JsonResponse({'success': True, 'message': 'Restaurant unfavorited!'})
+
         except json.JSONDecodeError:
             return JsonResponse({'success': False, 'message': 'Invalid JSON format.'}, status=400)
         except Exception as e:
-            logger.error(f"Error favoriting restaurant: {str(e)}")  # Log the error
+            logger.error(f"Error favoriting/unfavoriting restaurant: {str(e)}")  # Log the error
             return JsonResponse({'success': False, 'message': str(e)}, status=500)
-    return JsonResponse({'success': False, 'message': 'Invalid request'}, status=400)
 
+    return JsonResponse({'success': False, 'message': 'Invalid request'}, status=400)
