@@ -7,17 +7,32 @@
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
+            display: flex; /* Use flexbox for layout */
             padding: 20px;
+        }
+        .sidebar {
+            width: 50%; /* Width for the sidebar */
+            background-color: white;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-right: 20px; /* Space between sidebar and content */
+        }
+        .content {
+            flex-grow: 1; /* Allow content to take up remaining space */
+            background-color: white;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         h2 {
             color: #333;
         }
+        h3 {
+            margin-top: 20px; /* Space above the h3 */
+        }
         .user-info {
-            background-color: white;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
         }
         label {
             display: block;
@@ -45,21 +60,25 @@
     </style>
 </head>
 <body>
-    <h2>Account Information</h2>
-
-    <div class="user-info">
-        <p><span class="info-label">Username:</span> {{ user.username }}</p>
-        <p><span class="info-label">First Name:</span> {{ user.first_name }}</p>
-        <p><span class="info-label">Last Name:</span> {{ user.last_name }}</p>
-        <p><span class="info-label">Email:</span> {{ user.email }}</p>
-    </div>
-
-    <h3>Your Favorite Restaurants</h3>
+    <div class="sidebar">
+        <h3>Your Favorite Restaurants</h3>
         <ul>
             {% for favorite in favorites %}
-                <li>{{ favorite.place_id }}</li>  <!-- Adjust this based on what data you want to show -->
+                <li>{{ favorite.place_id }}</li>
             {% empty %}
                 <li>No favorite restaurants added.</li>
             {% endfor %}
         </ul>
+    </div>
+
+    <div class="content">
+        <h2>Account Information</h2>
+        <div class="user-info">
+            <p><span class="info-label">Username:</span> {{ user.username }}</p>
+            <p><span class="info-label">First Name:</span> {{ user.first_name }}</p>
+            <p><span class="info-label">Last Name:</span> {{ user.last_name }}</p>
+            <p><span class="info-label">Email:</span> {{ user.email }}</p>
+        </div>
+    </div>
 </body>
+</html>

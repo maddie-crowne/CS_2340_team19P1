@@ -638,7 +638,7 @@
     }
     
     function checkIfFavorited(placeId) {
-        fetch(`/api/is_favorited/${placeId}/`) // Create an endpoint to check if a restaurant is favorited
+        fetch(`api/is_favorited/${placeId}/`) // Create an endpoint to check if a restaurant is favorited
             .then(response => response.json())
             .then(data => {
                 favoriteState = data.isFavorited; // Set the favorite state based on server response
@@ -647,11 +647,6 @@
             .catch(error => console.error('Error checking favorite state:', error));
     }
     
-    checkIfFavorited(placeDetails.place_id);
-
-    
-    
-
 </script>
 
 </body>
