@@ -173,7 +173,7 @@
         clearDirections();
         back();
 
-        const searchTerm = document.getElementById('search-bar').value || 'restaurants in Atlanta';
+        const searchTerm = document.getElementById('search-bar').value || 'restaurant';
         const maxDistance = parseFloat(document.getElementById('max-distance').value);
         const minRating = parseFloat(document.getElementById('min-rating').value);
 
@@ -207,39 +207,86 @@
         });
     }
 
-    // Function to create markers and add them to the map
-    function createMarker(place) {
-        const marker = new google.maps.Marker({
-            map: map,
-            position: place.geometry.location
-        });
+    
+function createMarker(place) {
+    const marker = new google.maps.Marker({
+        map: map,
+        position: place.geometry.location
+    });
 
-        markers.push(marker);
-        addToSidebar(place);
+    markers.push(marker);
+    addToSidebar(place);
 
-        // Add click event to marker to navigate to another page with restaurant info
-        google.maps.event.addListener(marker, 'click', function() {
-            clearDirections();
-            back();
-            service.getDetails({ placeId: place.place_id }, function(placeDetails, status) {
-                if (status === google.maps.places.PlacesServiceStatus.OK) {
-                    selectedPlace = placeDetails.geometry.location;
-                    const photos = placeDetails.photos;
+    google.maps.event.addListener(marker, 'click', function() {
+        clearDirections();
+        back();
+        service.getDetails({ placeId: place.place_id }, function(placeDetails, status) {
+            if (status === google.maps.places.PlacesServiceStatus.OK) {
+                selectedPlace = placeDetails.geometry.location;
+                const photos = placeDetails.photos;
+
+                let cuisinesList = [];
+               const cuisines = [
+                    'Italian', 'Chinese', 'Mexican', 'Indian', 'Thai', 'Japanese',
+                    'American', 'Mediterranean', 'French', 'Greek', 'Vietnamese',
+                    'Spanish', 'Korean', 'BBQ', 'Seafood', 'Dessert', 'Vegetarian',
+                    'Middle Eastern', 'Himalayan', 'Cajun', 'Creole', 'Irish', 
+                    'Turkish', 'Brazilian', 'Caribbean', 'African', 'Peruvian', 
+                    'Filipino', 'Russian', 'Scottish', 'Dutch', 'German', 
+                    'Polish', 'Hungarian', 'Swiss', 'Belgian', 'Austrian',
+                    'Norwegian', 'Danish', 'Finnish', 'Icelandic', 'Sri Lankan',
+                    'Malaysian', 'Indonesian', 'Singaporean', 'Laotian', 
+                    'Cambodian', 'Mongolian', 'Somalian', 'Afghan', 'Tunisian', 
+                    'Egyptian', 'Algerian', 'Jamaican', 'Puerto Rican', 
+                    'Cuban', 'Haitian', 'Mexican-American', 'Tex-Mex', 'Vegan',
+                    'Raw', 'Fusion', 'Street Food', 'Comfort Food', 'Fast Food', 
+                    'Cafe', 'Bar', 'Restaurant', 'Seafood',
+                ];
+
+
+                const atlantaLocation = { lat: 33.7490, lng: -84.3880 };
+
+                const cuisinePromises = cuisines.map(cuisine => {
+                    return new Promise((resolve) => {
+                        const request = {
+                            location: atlantaLocation,
+                            radius: '24141',
+                            type: ['restaurant'],
+                            keyword: cuisine
+                        };
+
+                        service.nearbySearch(request, function(results, status) {
+                            if (status === google.maps.places.PlacesServiceStatus.OK) {
+                                const matchedResults = results.filter(result => 
+                                    result.name.toLowerCase() === placeDetails.name.toLowerCase()
+                                );
+
+                                if (matchedResults.length > 0) {
+                                    cuisinesList.push(cuisine);
+                                }
+                            } else {
+                                console.log(`Error fetching results for ${cuisine}:`, status); // Log error for this cuisine
+                            }
+                            resolve();
+                        });
+                    });
+                });
+
+                Promise.all(cuisinePromises).then(() => {
                     // Set the content of the sidebar with detailed info
-                    console.log(placeDetails.name);
                     document.getElementById('info').innerHTML = `
                         <strong>${placeDetails.name}</strong><br>
                         <strong>Address:</strong> ${placeDetails.formatted_address || 'N/A'}<br>
                         <strong>Phone:</strong> ${placeDetails.formatted_phone_number || 'N/A'}<br>
                         <strong>Rating:</strong> ${placeDetails.rating || 'N/A'}<br>
+                        <strong>Cuisines:</strong> ${cuisinesList.length > 0 ? cuisinesList.join(', ') : 'N/A'}<br>
                         <strong>Photos:</strong><br>
-                            ${photos.length > 0 ? photos.map(photo => {
-                                // Assuming you have a valid PlacesService instance
+                            ${photos.length > 0 ? photos.slice(0, 3).map(photo => {
                                 const photoUrl = photo.getUrl({ maxWidth: 400, maxHeight: 400 });
                                 return `
                                     <img src="${photoUrl}" alt="Photo of ${placeDetails.name}" style="width: 100%; max-width: 150px; height: auto; margin-bottom: 10px;" onerror="this.style.display='none';">
                                 `;
-                             }).join('') : 'No photos available.'}<br>
+                            }).join('') : 'No photos available.'}<br>
 
                         <strong>Reviews:</strong><br>
                         ${placeDetails.reviews ? placeDetails.reviews.map(review => `
@@ -252,18 +299,81 @@
                     `;
 
                     // Show the sidebar
-                    //document.getElementById('sidebar').style.display = 'block';
                     document.getElementById('restaurant-info').style.display = 'block';
                     document.getElementById('restaurant-info').style.width = '30%';
                     document.getElementById('sidebar').style.display = 'none';
                     document.getElementById('map').style.width = '70%';
                     document.getElementById('get-directions-btn').style.display = 'block';
-                } else {
-                    console.log("didn't work")
-                }
-            });
+                });
+
+            } else {
+                console.log("Error fetching place details:", status);
+            }
         });
-    }
+    });
+}
+
+
+
+
+
+    
+    // Function to create markers and add them to the map
+    {#function createMarker(place) {#}
+    {#    const marker = new google.maps.Marker({#}
+    {#        map: map,#}
+    {#        position: place.geometry.location#}
+    {#    });#}
+    {##}
+    {#    markers.push(marker);#}
+    {#    addToSidebar(place);#}
+    {##}
+    {#    // Add click event to marker to navigate to another page with restaurant info#}
+    {#    google.maps.event.addListener(marker, 'click', function() {#}
+    {#        clearDirections();#}
+    {#        back();#}
+    {#        service.getDetails({ placeId: place.place_id }, function(placeDetails, status) {#}
+    {#            if (status === google.maps.places.PlacesServiceStatus.OK) {#}
+    {#                selectedPlace = placeDetails.geometry.location;#}
+    {#                const photos = placeDetails.photos;#}
+    {#                // Set the content of the sidebar with detailed info#}
+    {#                console.log(placeDetails.name);#}
+    {#                document.getElementById('info').innerHTML = `#}
+    {#                    <strong>${placeDetails.name}</strong><br>#}
+    {#                    <strong>Address:</strong> ${placeDetails.formatted_address || 'N/A'}<br>#}
+    {#                    <strong>Phone:</strong> ${placeDetails.formatted_phone_number || 'N/A'}<br>#}
+    {#                    <strong>Rating:</strong> ${placeDetails.rating || 'N/A'}<br>#}
+    {#                    <strong>Photos:</strong><br>#}
+    {#                        ${photos.length > 0 ? photos.slice(0, 3).map(photo => {#}
+    {#                        const photoUrl = photo.getUrl({ maxWidth: 400, maxHeight: 400 });#}
+    {#                        return `#}
+    {#                            <img src="${photoUrl}" alt="Photo of ${placeDetails.name}" style="width: 100%; max-width: 150px; height: auto; margin-bottom: 10px;" onerror="this.style.display='none';">#}
+    {#                        `;#}
+    {#                    }).join('') : 'No photos available.'}<br>#}
+    {##}
+    {#                    <strong>Reviews:</strong><br>#}
+    {#                    ${placeDetails.reviews ? placeDetails.reviews.map(review => `#}
+    {#                        <div>#}
+    {#                            <strong>${review.author_name}</strong><br>#}
+    {#                            Rating: ${review.rating}<br>#}
+    {#                            ${review.text}<br><br>#}
+    {#                        </div>#}
+    {#                    `).join('') : 'No reviews available.'}#}
+    {#                `;#}
+    {##}
+    {#                // Show the sidebar#}
+    {#                //document.getElementById('sidebar').style.display = 'block';#}
+    {#                document.getElementById('restaurant-info').style.display = 'block';#}
+    {#                document.getElementById('restaurant-info').style.width = '30%';#}
+    {#                document.getElementById('sidebar').style.display = 'none';#}
+    {#                document.getElementById('map').style.width = '70%';#}
+    {#                document.getElementById('get-directions-btn').style.display = 'block';#}
+    {#            } else {#}
+    {#                console.log("didn't work")#}
+    {#            }#}
+    {#        });#}
+    {#    });#}
+    {# }#}
     function getDirections() {
         // Update the mode variable to get the latest value from the dropdown
         document.getElementById("transportation-filter").addEventListener("change", function() {
@@ -326,13 +436,12 @@
                        <strong>Phone:</strong> ${placeDetails.formatted_phone_number || 'N/A'}<br>
                        <strong>Rating:</strong> ${placeDetails.rating || 'N/A'}<br>
                        <strong>Photos:</strong><br>
-                           ${photos.length > 0 ? photos.map(photo => {
-                    // Assuming you have a valid PlacesService instance
-                    const photoUrl = photo.getUrl({ maxWidth: 400, maxHeight: 400 });
-                    return `
-                                   <img src="${photoUrl}" alt="Photo of ${placeDetails.name}" style="width: 100%; max-width: 150px; height: auto; margin-bottom: 10px;" onerror="this.style.display='none';">
-                               `;
-                }).join('') : 'No photos available.'}<br>
+                            ${photos.length > 0 ? photos.slice(0, 3).map(photo => {
+                            const photoUrl = photo.getUrl({ maxWidth: 400, maxHeight: 400 });
+                            return `
+                                <img src="${photoUrl}" alt="Photo of ${placeDetails.name}" style="width: 100%; max-width: 150px; height: auto; margin-bottom: 10px;" onerror="this.style.display='none';">
+                            `;
+                        }).join('') : 'No photos available.'}<br>
 
                        <strong>Reviews:</strong><br>
                        ${placeDetails.reviews ? placeDetails.reviews.map(review => `
