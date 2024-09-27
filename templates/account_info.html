@@ -53,4 +53,13 @@
         <p><span class="info-label">Last Name:</span> {{ user.last_name }}</p>
         <p><span class="info-label">Email:</span> {{ user.email }}</p>
     </div>
+
+    <h3>Your Favorite Restaurants</h3>
+        <ul>
+            {% for favorite in favorites %}
+                <li>{{ favorite.place_id }}</li>  <!-- Adjust this based on what data you want to show -->
+            {% empty %}
+                <li>No favorite restaurants added.</li>
+            {% endfor %}
+        </ul>
 </body>

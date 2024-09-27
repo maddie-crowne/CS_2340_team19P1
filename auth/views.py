@@ -1,8 +1,11 @@
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from .forms import CustomUserCreationForm  # Make sure this import is correct
+import json
 
 def register(request):
     if request.method == 'POST':
@@ -39,3 +42,7 @@ def user_login(request):
 def user_logout(request):
     logout(request)
     return redirect('auth:login')  # Redirect to login page after logout
+
+@login_required  # Ensure user is logged in
+def current_user(request):
+    return JsonResponse({'userId': request.user.id})  # Or return any other relevant user info

@@ -9,7 +9,8 @@ from django.contrib.auth import login
 from auth.forms import CustomUserCreationForm
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from django.contrib import messages
+from .models import Favorite
+
 
 def register(request):
     if request.method == 'POST':
@@ -48,7 +49,9 @@ def user_logout(request):
 
 @login_required
 def account_info(request):
-    return render(request, 'account_info.html')
+    if request.user.is_authenticated:
+        favorites = Favorite.objects.filter(user=request.user)
+        return render(request, 'account_info.html', {'user': request.user, 'favorites': favorites})
 
 
 def googleMaps(request):
@@ -65,3 +68,31 @@ def map_proxy(request):
     }
     response = requests.get(api_url, params=params)
     return JsonResponse(response.json())
+
+import json
+import logging  # Import logging
+from django.contrib.auth.decorators import login_required
+
+# Set up logging
+logger = logging.getLogger(__name__)
+
+@login_required
+def favorite_restaurant(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            place_id = data.get('placeId')
+
+            if not place_id:
+                return JsonResponse({'success': False, 'message': 'Place ID is required.'}, status=400)
+
+            Favorite.objects.create(user=request.user, place_id=place_id)
+
+            return JsonResponse({'success': True, 'message': 'Restaurant favorited!'})
+        except json.JSONDecodeError:
+            return JsonResponse({'success': False, 'message': 'Invalid JSON format.'}, status=400)
+        except Exception as e:
+            logger.error(f"Error favoriting restaurant: {str(e)}")  # Log the error
+            return JsonResponse({'success': False, 'message': str(e)}, status=500)
+    return JsonResponse({'success': False, 'message': 'Invalid request'}, status=400)
+
