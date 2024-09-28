@@ -274,55 +274,6 @@
                                 resolve();
                             });
 
-                            request = {
-                                location: atlantaLocation,
-                                radius: '24141',
-                                type: ['bar'],
-                                keyword: cuisine
-                            };
-
-                            service.nearbySearch(request, function(results, status) {
-                                if (status === google.maps.places.PlacesServiceStatus.OK) {
-                                    const matchedResults = results.filter(result =>
-                                        result.name.toLowerCase() === placeDetails.name.toLowerCase()
-                                    );
-
-                                    const nameContainsCuisine = placeDetails.name.toLowerCase().includes(cuisine.toLowerCase());
-
-                                    if ((matchedResults.length > 0 || nameContainsCuisine) && !cuisinesList.includes(cuisine)) {
-                                        cuisinesList.push(cuisine);
-                                    }
-                                }
-                                resolve();
-                            });
-
-                            request = {
-                                location: atlantaLocation,
-                                radius: maxDistance,
-                                type: ['cafe'],
-                                keyword: cuisine
-                            };
-
-                            service.nearbySearch(request, function(results, status) {
-                                if (status === google.maps.places.PlacesServiceStatus.OK) {
-                                    const matchedResults = results.filter(result =>
-                                        result.name.toLowerCase() === placeDetails.name.toLowerCase()
-                                    );
-
-                                    const nameContainsCuisine = placeDetails.name.toLowerCase().includes(cuisine.toLowerCase());
-
-                                    if ((matchedResults.length > 0 || nameContainsCuisine) && !cuisinesList.includes(cuisine)) {
-                                        cuisinesList.push(cuisine);
-                                    }
-                                }
-                                resolve();
-                            });
-
-
-
-                        });
-                    });
-
                     Promise.all(cuisinePromises).then(() => {
                         // Fallback to types if no cuisines found
                         const fallbackTypes = placeDetails.types.filter(type =>
@@ -469,53 +420,6 @@
                             }
                             resolve();
                         });
-                        
-                        request = {
-                            location: atlantaLocation,
-                            radius: '24141',
-                            type: ['bar'],
-                            keyword: cuisine
-                        };
-
-                        service.nearbySearch(request, function(results, status) {
-                            if (status === google.maps.places.PlacesServiceStatus.OK) {
-                                const matchedResults = results.filter(result => 
-                                    result.name.toLowerCase() === placeDetails.name.toLowerCase()
-                                );
-
-                                const nameContainsCuisine = placeDetails.name.toLowerCase().includes(cuisine.toLowerCase());
-
-                                if ((matchedResults.length > 0 || nameContainsCuisine) && !cuisinesList.includes(cuisine)) {
-                                    cuisinesList.push(cuisine);
-                                }
-                            }
-                            resolve();
-                        });
-                        
-                        request = {
-                            location: atlantaLocation,
-                            radius: '24141',
-                            type: ['cafe'],
-                            keyword: cuisine
-                        };
-
-                        service.nearbySearch(request, function(results, status) {
-                            if (status === google.maps.places.PlacesServiceStatus.OK) {
-                                const matchedResults = results.filter(result => 
-                                    result.name.toLowerCase() === placeDetails.name.toLowerCase()
-                                );
-
-                                const nameContainsCuisine = placeDetails.name.toLowerCase().includes(cuisine.toLowerCase());
-
-                                if ((matchedResults.length > 0 || nameContainsCuisine) && !cuisinesList.includes(cuisine)) {
-                                    cuisinesList.push(cuisine);
-                                }
-                            }
-                            resolve();
-                        });
-                        
-                        
-                        
                     });
                 });
 
