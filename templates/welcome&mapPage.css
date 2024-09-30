@@ -10,16 +10,18 @@ body {
 }
 
 /* Style for ATLGrub Header */
-.atlgrub-header {
-  font-family: 'Mingzat', sans-serif;
-  font-size: 60px;
-  color: #ffffff;
+.header {
+  display: flex; /* Use flexbox to align elements */
+  align-items: center; /* Vertically center the items in the header */
+  justify-content: space-between; /* Push the login button to the right */
+  padding: 20px; /* Add some padding to the header */
+  background-color: #2B6C7E; /* Background color for the header */
+  color: white; /* Text color */
 }
 
-/* Style for Welcome Header */
-.welcome-header {
+.header-title {
   font-family: 'Mingzat', sans-serif;
-  font-size: 36px;
+  font-size: 60px;
   color: #ffffff;
 }
 
@@ -43,17 +45,44 @@ body {
 }
 
 .back-button {
-  background: none;
+  position: absolute;
+  top: 40px;
+  left: 10px;
+  background-color: #00000000;
+  color: white;
   border: none;
-  color: var(--text-color);
+  padding: 10px 20px;
+  font-size: 36px;
+  border-radius: 5px;
   cursor: pointer;
-  font-size: 18px;
+}
+
+.back-button:hover {
+  color: rgba(255, 255, 255, 0.5);
 }
 
 /* Content Container */
 .content-container {
   display: flex;
   flex-grow: 1;
+}
+
+/* Position Login Button at Top-Right */
+.login-button {
+  position: absolute;
+  top: 40px;
+  right: 10px;
+  background-color: #00000000;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 36px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.login-button:hover {
+  color: rgba(255, 255, 255, 0.5);
 }
 
 /* Restaurants Section */
@@ -77,6 +106,7 @@ body {
 }
 
 .restaurant-card {
+  position: relative;
   display: flex;
   background-color: #006466; /* Card background color */
   border-radius: 8px;
@@ -115,6 +145,24 @@ body {
 .star-rating {
   margin: 10px 0;
 }
+
+.heart-favorite {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 24px;
+  color: rgb(170, 170, 170);
+  cursor: pointer;
+}
+
+.heart-favorite:hover {
+  color: #555555; /* Changes color on hover */
+}
+
+.heart-favorite i {
+  font-size: 24px; /* Size of the heart icon */
+}
+
 
 /* Map & Search Section */
 .map-section {
