@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome & Map Page</title>
@@ -25,8 +26,9 @@
             justify-content: center;
         }
         .header img {
-            height: 100px; /* Adjust logo height */
-            margin-right: 15px; /* Space between logo and title */
+            height: 70px; /* Adjust logo height */
+            margin-right: 5px; /* Space between logo and title */
+            margin-bottom: 20px;
         }
         .container {
             display: flex;
@@ -76,11 +78,15 @@
     </style>
 </head>
 <body>
+    <!-- Back Button -->
+    <button class="back-button">Back</button>
+
+    <!-- Login Button -->
+    <button class="login-button">Log In</button>
+
     <div class="header">
-        <button class="back-button">Back</button>
-        <img src="assets/images/Logo.png" alt="Logo" width="150" height="200"> <!-- Replace with your logo URL -->
-        
-        </h1>ATLGrub</h1>
+        <img src="Logo.png" alt="Logo" class="logo"> <!-- Replace with your logo URL -->
+        <h1 class="header-title">ATLGrub</h1>
     </div>
     <div class="container">
         <div class="restaurants-container">
@@ -96,6 +102,10 @@
                         <p>Cuisine Type, City, State</p>
                         <div class="star-rating">⭐⭐⭐⭐⭐</div> <!-- Star Rating -->
                     </div>
+                    <!-- Heart Icon -->
+                    <div class="heart-favorite">
+                        <i class="fas fa-heart"></i>
+                    </div>
                   </div>
                 <!-- Restaurant Card 2 -->
                 <div class="restaurant-card">
@@ -104,6 +114,10 @@
                         <h3>Restaurant Name 2</h3>
                         <p>Cuisine Type, City, State</p>
                         <div class="star-rating">⭐⭐⭐⭐⭐</div> <!-- Star Rating -->
+                    </div>
+                    <!-- Heart Icon -->
+                    <div class="heart-favorite">
+                        <i class="fas fa-heart"></i>
                     </div>
                   </div>
                 <!-- More restaurant cards for scrolling -->
@@ -114,6 +128,10 @@
                         <p>Cuisine Type, City, State</p>
                         <div class="star-rating">⭐⭐⭐⭐⭐</div> <!-- Star Rating -->
                     </div>
+                    <!-- Heart Icon -->
+                    <div class="heart-favorite">
+                        <i class="fas fa-heart"></i>
+                    </div>
                   </div>
                 <div class="restaurant-card">
                     <img src="rest.jpg" alt="Restaurant">
@@ -121,6 +139,10 @@
                         <h3>Restaurant Name 4</h3>
                         <p>Cuisine Type, City, State</p>
                         <div class="star-rating">⭐⭐⭐⭐⭐</div> <!-- Star Rating -->
+                    </div>
+                    <!-- Heart Icon -->
+                    <div class="heart-favorite">
+                        <i class="fas fa-heart"></i>
                     </div>
                   </div>
                 <div class="restaurant-card">
@@ -130,6 +152,10 @@
                         <p>Cuisine Type, City, State</p>
                         <div class="star-rating">⭐⭐⭐⭐⭐</div> <!-- Star Rating -->
                     </div>
+                    <!-- Heart Icon -->
+                    <div class="heart-favorite">
+                        <i class="fas fa-heart"></i>
+                    </div>
                   </div>
                 <div class="restaurant-card">
                     <img src="rest.jpg" alt="Restaurant">
@@ -137,6 +163,10 @@
                         <h3>Restaurant Name 6</h3>
                         <p>Cuisine Type, City, State</p>
                         <div class="star-rating">⭐⭐⭐⭐⭐</div> <!-- Star Rating -->
+                    </div>
+                    <!-- Heart Icon -->
+                    <div class="heart-favorite">
+                        <i class="fas fa-heart"></i>
                     </div>
                   </div>
                 <div class="restaurant-card">
@@ -146,6 +176,10 @@
                         <p>Cuisine Type, City, State</p>
                         <div class="star-rating">⭐⭐⭐⭐⭐</div> <!-- Star Rating -->
                     </div>
+                    <!-- Heart Icon -->
+                    <div class="heart-favorite">
+                        <i class="fas fa-heart"></i>
+                    </div>
                 </div>
                 <div class="restaurant-card">
                     <img src="rest.jpg" alt="Restaurant">
@@ -153,6 +187,10 @@
                         <h3>Restaurant Name 8</h3>
                         <p>Cuisine Type, City, State</p>
                         <div class="star-rating">⭐⭐⭐⭐⭐</div> <!-- Star Rating -->
+                    </div>
+                    <!-- Heart Icon -->
+                    <div class="heart-favorite">
+                        <i class="fas fa-heart"></i>
                     </div>
                 </div>
                 <div class="restaurant-card">
@@ -162,6 +200,10 @@
                         <p>Cuisine Type, City, State</p>
                         <div class="star-rating">⭐⭐⭐⭐⭐</div> <!-- Star Rating -->
                     </div>
+                    <!-- Heart Icon -->
+                    <div class="heart-favorite">
+                        <i class="fas fa-heart"></i>
+                    </div>
                 </div>
                 <div class="restaurant-card">
                     <img src="rest.jpg" alt="Restaurant">
@@ -169,6 +211,10 @@
                         <h3>Restaurant Name 10</h3>
                         <p>Cuisine Type, City, State</p>
                         <div class="star-rating">⭐⭐⭐⭐⭐</div> <!-- Star Rating -->
+                    </div>
+                    <!-- Heart Icon -->
+                    <div class="heart-favorite">
+                        <i class="fas fa-heart"></i>
                     </div>
                 </div>
                 <div class="restaurant-card">
@@ -178,6 +224,10 @@
                         <p>Cuisine Type, City, State</p>
                         <div class="star-rating">⭐⭐⭐⭐⭐</div> <!-- Star Rating -->
                     </div>
+                    <!-- Heart Icon -->
+                    <div class="heart-favorite">
+                        <i class="fas fa-heart"></i>
+                    </div>
                   </div>
                 <div class="restaurant-card">
                     <img src="rest.jpg" alt="Restaurant">
@@ -185,6 +235,10 @@
                         <h3>Restaurant Name 12</h3>
                         <p>Cuisine Type, City, State</p>
                         <div class="star-rating">⭐⭐⭐⭐⭐</div> <!-- Star Rating -->
+                    </div>
+                    <!-- Heart Icon -->
+                    <div class="heart-favorite">
+                        <i class="fas fa-heart"></i>
                     </div>
                   </div>
             </div>
