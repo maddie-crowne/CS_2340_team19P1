@@ -9,14 +9,22 @@
             background-color: #f4f4f4;
             display: flex; /* Use flexbox for layout */
             padding: 20px;
+            height: 100vh; /* Full viewport height */
+            margin: 0; /* Remove default margin */
         }
         .sidebar {
             width: 50%; /* Width for the sidebar */
-            background-color: white;
+            background-color: #f4f4f4;
             padding: 10px;
             border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+            overflow-y: auto; /* Scroll if content overflows */
             margin-right: 20px; /* Space between sidebar and content */
+        }
+        .sidebar ul {
+            list-style-type: none; /* Remove bullet points */
+            padding: 0; /* Remove default padding */
+            margin: 0; /* Remove default margin */
         }
         .content {
             flex-grow: 1; /* Allow content to take up remaining space */
@@ -57,6 +65,20 @@
         button:hover {
             background-color: #0056b3;
         }
+        .restaurant-item {
+            cursor: pointer;
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+        .restaurant-item:hover {
+            background-color: #ddd;
+        }
+        .user-info {
+            margin-bottom: 20px;
+        }
+        .info-label {
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -64,13 +86,20 @@
         <h3>Your Favorite Restaurants</h3>
         <ul>
             {% for favorite in favorites %}
-                <li>{{ favorite.place_id }}</li>
+                <li class="restaurant-item">
+                    <a href="/googleMaps/?place_id={{ favorite.place_id }}" style="text-decoration: none; color: inherit;">
+                        <strong>{{ favorite.name }}</strong><br>
+                        {{ favorite.address }}<br>
+                        Rating: {{ favorite.rating }}<br>
+                        <img src="{{ favorite.picture_url }}" alt="{{ favorite.name }}" style="max-width: 100%; height: auto;">
+                    </a>
+                </li>
             {% empty %}
                 <li>No favorite restaurants added.</li>
             {% endfor %}
         </ul>
     </div>
-
+    
     <div class="content">
         <h2>Account Information</h2>
         <div class="user-info">

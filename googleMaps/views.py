@@ -11,6 +11,8 @@ from auth.forms import CustomUserCreationForm
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from googleMaps.models import Favorite
+import json
+import logging  # Import logging
 
 
 def register(request):
@@ -52,10 +54,21 @@ def user_logout(request):
 def account_info(request):
     if request.user.is_authenticated:
         favorites = Favorite.objects.filter(user=request.user)
-        return render(request, 'account_info.html', {'user': request.user, 'favorites': favorites})
+
+        favorite_restaurants = []
+        for favorite in favorites:
+            restaurant = get_restaurant_details(favorite.place_id)  # Fetch restaurant details
+            favorite_restaurants.append({
+                'name': restaurant['name'],
+                'address': restaurant['address'],
+                'rating': restaurant['rating'],
+                'picture_url': restaurant['picture_url'],
+                'place_id': favorite.place_id,
+            })
+
+        return render(request, 'account_info.html', {'user': request.user, 'favorites': favorite_restaurants})
     else:
         return redirect('auth:login')  # Redirect to login if not authenticated
-
 
 def googleMaps(request):
     return render(request, 'googleMaps.html', {
@@ -72,9 +85,42 @@ def map_proxy(request):
     response = requests.get(api_url, params=params)
     return JsonResponse(response.json())
 
-import json
-import logging  # Import logging
-from django.contrib.auth.decorators import login_required
+def get_restaurant_details(place_id):
+    api_url = f'https://maps.googleapis.com/maps/api/place/details/json'
+    params = {
+        'place_id': place_id,
+        'key': settings.API_KEY,
+    }
+
+    response = requests.get(api_url, params=params)
+
+    if response.status_code == 200:
+        data = response.json()
+        if data.get('result'):
+            result = data['result']
+            photo_url = None
+            if 'photos' in result:
+                photo_reference = result['photos'][0]['photo_reference']
+                photo_url = get_photo_url(photo_reference)
+
+            return {
+                'name': result.get('name'),
+                'address': result.get('formatted_address'),
+                'rating': result.get('rating'),
+                'picture_url': photo_url,
+            }
+
+    return {
+        'name': 'Unknown Restaurant',
+        'address': 'N/A',
+        'rating': 'N/A',
+        'picture_url': None,
+    }
+
+
+def get_photo_url(photo_reference):
+    return f'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference={photo_reference}&key={settings.API_KEY}'
+
 
 # Set up logging
 logger = logging.getLogger(__name__)

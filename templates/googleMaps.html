@@ -139,6 +139,13 @@
         
         
         clearSidebar()
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const placeIdFromUrl = urlParams.get('place_id');
+        
+        if (placeIdFromUrl) {
+            searchRestaurants(); // This will use the existing logic to fetch details
+        }
     }
 
     if (navigator.geolocation) {
@@ -171,8 +178,8 @@
         clearSidebar();
         clearDirections();
         back();
-
-        const searchTerm = document.getElementById('search-bar').value || 'restaurant';
+        
+        const searchTerm = document.getElementById('search-bar').value;
         maxDistance = parseFloat(document.getElementById('max-distance').value);
         const minRating = parseFloat(document.getElementById('min-rating').value);
 
@@ -182,30 +189,48 @@
             type: ['restaurant']
         };
 
-        service.textSearch(request, function(results, status) {
-            if (status === google.maps.places.PlacesServiceStatus.OK) {
-                if (results.length === 0) {
-                    console.error("No restaurants found.");
-                    return;
+        const urlParams = new URLSearchParams(window.location.search);
+        const placeIdFromUrl = urlParams.get('place_id');
+        
+        // If there's a place_id in the URL, fetch details for that restaurant
+        if (placeIdFromUrl) {
+            service.getDetails({placeId: placeIdFromUrl}, function (placeDetails, status) {
+                if (status === google.maps.places.PlacesServiceStatus.OK) {
+                    createMarker(placeDetails);
+                    // Center the map on the place's location
+                    map.setCenter(placeDetails.geometry.location);
+                    map.setZoom(15); // Optional: adjust the zoom level
+                    urlParams.delete('place_id');
+                    window.history.replaceState({}, document.title, window.location.pathname + '?' + urlParams.toString());
                 }
-                results.forEach(place => {
-                    if (place.rating >= minRating) {
-                        const distance = google.maps.geometry.spherical.computeDistanceBetween(
-                            place.geometry.location,
-                            userLocation || map.getCenter()  // Use user's location or the center of the map
-                        );
+            });
 
-                        if (distance <= maxDistance) {
-                            createMarker(place);
-                            // Add restaurant to sidebar
+            } else {
+                service.textSearch(request, function (results, status) {
+                    if (status === google.maps.places.PlacesServiceStatus.OK) {
+                        if (results.length === 0) {
+                            console.error("No restaurants found.");
+                            return;
                         }
+                        results.forEach(place => {
+                            if (place.rating >= minRating) {
+                                const distance = google.maps.geometry.spherical.computeDistanceBetween(
+                                    place.geometry.location,
+                                    userLocation || map.getCenter()  // Use user's location or the center of the map
+                                );
+
+                                if (distance <= maxDistance) {
+                                    createMarker(place);
+                                    // Add restaurant to sidebar
+                                }
+                            }
+                        });
+                    } else {
+                        console.error("Search failed: " + status);
                     }
                 });
-            } else {
-                console.error("Search failed: " + status);
             }
-        });
-    }
+        }
 
     function capitalizeFirstLetter(string) {
         if (typeof string !== 'string') return string; // Ensure it's a string
@@ -498,6 +523,14 @@
         document.getElementById("sidebar").style.width = '30%';
         document.getElementById("restaurant-info").style.width = '0%';
         document.getElementById("info").innerHTML = '';
+        // Set the center of the map to the user's location and reset the zoom
+        if (userLocation) {
+            // Check if the current zoom is not 12 or the center is not the user's location
+            if (map.getZoom() !== 12 || !map.getCenter().equals(userLocation)) {
+                map.setCenter(userLocation); // Set the center to user's location
+                map.setZoom(12); // Reset the zoom level to 12
+            }
+        }
     }
 
     const csrfToken = getCookie('csrftoken');
@@ -549,6 +582,7 @@
             })
             .catch(error => console.error('Error checking favorite state:', error));
     }
+    
     
 </script>
 
