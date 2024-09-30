@@ -95,6 +95,18 @@ body, html {
   z-index: 19;
 }
 
+.back-button {
+  background: none; /* Transparent background */
+  border: none; /* No border */
+  color: white; /* Button text color */
+  cursor: pointer; /* Pointer cursor on hover */
+  font-size: 20px; /* Font size for the button */
+  position: absolute; /* Absolute positioning */
+  left: 0px; /* Position from the left */
+  left: 0%; /* Center vertically */
+  transform: translateX(-50%); /* Adjust for vertical centering */
+}
+
 /* Logo */
 .atl-grub-logo {
   position: absolute;
@@ -186,28 +198,32 @@ body, html {
   text-decoration: underline;
 }
 
-/* Sign-In Button */
-.sign-in-button {
-  width: 100%;
+.login-button {
+  display: flex; /* Flex display for centering */
+  align-items: center; /* Centering vertically */
+  justify-content: center; /* Centering horizontally */
+  width: 100%; /* Adjust as needed */
   height: 60px; /* Adjusted height */
-  margin: 10px 0 0 0; /* Top margin */
-  background: #0d99ff;
-  border-radius: 27.363px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  margin: 10px 0; /* Top margin */
+  background: #0d99ff; /* Button background color */
+  border-radius: 27.363px; /* Rounded corners */
+  color: white; /* Text color */
+  font-size: 24px; /* Font size */
+  text-decoration: none; /* Remove underline */
+  cursor: pointer; /* Pointer cursor */
+  transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Transition effects */
 }
 
-.sign-in-button button {
-  width: 90%;
-  height: 80%;
-  border: none;
-  border-radius: 27.363px;
-  background: none;
-  color: white;
-  font-size: 24px; /* Adjusted font size */
-  cursor: pointer;
+.login-button:hover {
+  background-color: #0c85d4; /* Slightly darker blue on hover */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow effect on hover */
 }
+
+.login-button:focus {
+  outline: none; /* Remove default outline */
+  box-shadow: 0 0 0 3px rgba(13, 153, 255, 0.5); /* Custom focus outline */
+}
+
 
 /* Register Section */
 .register-button {
