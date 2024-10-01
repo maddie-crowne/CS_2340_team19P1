@@ -193,7 +193,7 @@
             <div class="favorites-list">
                 {% for favorite in favorites %}
                     <div class="restaurant-card">
-                        <a href="/googleMaps/?place_id={{ favorite.place_id }}" style="text-decoration: none; color: inherit;">
+                        <a href="/googleMaps/?address={{ favorite.address }}" style="text-decoration: none; color: inherit;">
                             <div>
                                 <h3>{{ favorite.name }}</h3>
                                 <p>{{ favorite.address }}</p>

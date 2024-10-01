@@ -326,9 +326,8 @@
             zoom: 12,
             center: atlanta
         });
-        
-        // Initial search for restaurants
-        searchRestaurants();
+
+        searchRestaurants()
     }
 
     if (navigator.geolocation) {
@@ -381,34 +380,70 @@
         const searchTerm = document.getElementById('search').value || "restaurant";
         const maxDistance = parseFloat(document.getElementById('max-distance').value);
         const minRating = parseFloat(document.getElementById('min-rating').value);
+        let request = null;
 
         const {Place} = await google.maps.importLibrary("places");
-        const request = {
-            textQuery: searchTerm,
-            fields: ["displayName", "location", "formattedAddress", "nationalPhoneNumber", 
-                        "rating", "photos", "types", "reviews"],
-            includedType: "restaurant",
-            locationBias: userLocation,
-            maxResultCount: 2,
-            minRating: minRating,
-            region: "us",
-            useStrictTypeFiltering: true,
-        };
 
-        const {places} = await Place.searchByText(request);
-        if (!places.length) {
-            console.error("No restaurants found.");
-        } else {
-            places.forEach(place => {
-                const distance = google.maps.geometry.spherical.computeDistanceBetween(
-                    place.location,
-                    userLocation || map.getCenter()  // Use user's location or the center of the map
-                );
-                
-                if (distance <= maxDistance) {
+        // Get URL parameters to see if an address of a favorite is there
+        const urlParams = new URLSearchParams(window.location.search);
+        const addressFromUrl = urlParams.get('address');
+        const formattedAddress = addressFromUrl ? decodeURIComponent(addressFromUrl) : null;
+
+        if (formattedAddress) { // Search for favorite
+            request = {
+                textQuery: formattedAddress,
+                fields: ["displayName", "location", "formattedAddress", "nationalPhoneNumber",
+                    "rating", "photos", "types", "reviews"],
+                includedType: "restaurant",
+                locationBias: userLocation,
+                maxResultCount: 3,
+                minRating: minRating,
+                region: "us",
+                useStrictTypeFiltering: true,
+            };
+            const {places} = await Place.searchByText(request);
+            if (!places.length) {
+                console.error("No restaurants found.");
+            } else {
+                places.forEach(place => {
                     createMarker(place);
-                }
-            });
+                    // Center the map on the place's location
+                    map.setCenter(place.location);
+                    map.setZoom(15);
+                    // Deletes address from URL
+                    urlParams.delete('address');
+                    window.history.replaceState({}, document.title, window.location.pathname + '' + urlParams.toString());
+                });
+            }
+
+        } else { // Search for what is in the search bar or "restaurant" if search bar empty
+            request = {
+                textQuery: searchTerm,
+                fields: ["displayName", "location", "formattedAddress", "nationalPhoneNumber",
+                    "rating", "photos", "types", "reviews"],
+                includedType: "restaurant",
+                locationBias: userLocation,
+                maxResultCount: 3,
+                minRating: minRating,
+                region: "us",
+                useStrictTypeFiltering: true,
+            };
+
+            const {places} = await Place.searchByText(request);
+            if (!places.length) {
+                console.error("No restaurants found.");
+            } else {
+                places.forEach(place => {
+                    const distance = google.maps.geometry.spherical.computeDistanceBetween(
+                        place.location,
+                        userLocation || map.getCenter()  // Use user's location or the center of the map
+                    );
+
+                    if (distance <= maxDistance) {
+                        createMarker(place);
+                    }
+                });
+            }
         }
     }
 
@@ -430,56 +465,56 @@
         google.maps.event.addListener(marker, 'click', function () {
             clearDirections();
             back();
-            
+
             selectedPlace = place.location;
             const photos = place.photos;
-            
+
             const allowedCuisines = [
-                'american_restaurant', 'bakery', 'bar', 'barbecue_restaurant', 
-                'brazilian_restaurant', 'breakfast_restaurant', 'brunch_restaurant', 
-                'cafe', 'chinese_restaurant', 'coffee_shop', 'fast_food_restaurant', 
-                'french_restaurant', 'greek_restaurant', 'hamburger_restaurant', 
-                'ice_cream_shop', 'indian_restaurant', 'indonesian_restaurant', 
-                'italian_restaurant', 'japanese_restaurant', 'korean_restaurant', 
-                'lebanese_restaurant', 'meal_delivery', 'meal_takeaway', 
-                'mediterranean_restaurant', 'mexican_restaurant', 'middle_eastern_restaurant', 
-                'pizza_restaurant', 'ramen_restaurant', 'sandwich_shop', 
-                'seafood_restaurant', 'spanish_restaurant', 'steak_house', 
-                'sushi_restaurant', 'thai_restaurant', 'turkish_restaurant', 
+                'american_restaurant', 'bakery', 'bar', 'barbecue_restaurant',
+                'brazilian_restaurant', 'breakfast_restaurant', 'brunch_restaurant',
+                'cafe', 'chinese_restaurant', 'coffee_shop', 'fast_food_restaurant',
+                'french_restaurant', 'greek_restaurant', 'hamburger_restaurant',
+                'ice_cream_shop', 'indian_restaurant', 'indonesian_restaurant',
+                'italian_restaurant', 'japanese_restaurant', 'korean_restaurant',
+                'lebanese_restaurant', 'meal_delivery', 'meal_takeaway',
+                'mediterranean_restaurant', 'mexican_restaurant', 'middle_eastern_restaurant',
+                'pizza_restaurant', 'ramen_restaurant', 'sandwich_shop',
+                'seafood_restaurant', 'spanish_restaurant', 'steak_house',
+                'sushi_restaurant', 'thai_restaurant', 'turkish_restaurant',
                 'vegan_restaurant', 'vegetarian_restaurant'
             ];
-            
+
             const cuisineNames = {
-                'american_restaurant': 'American', 'bakery': 'Bakery', 'bar': 'Bar', 
-                'barbecue_restaurant': 'Barbecue', 'brazilian_restaurant': 'Brazilian', 
-                'breakfast_restaurant': 'Breakfast', 'brunch_restaurant': 'Brunch', 
-                'cafe': 'Café', 'chinese_restaurant': 'Chinese', 'coffee_shop': 'Coffee Shop', 
-                'fast_food_restaurant': 'Fast Food', 'french_restaurant': 'French', 
-                'greek_restaurant': 'Greek', 'hamburger_restaurant': 'Hamburger', 
-                'ice_cream_shop': 'Ice Cream', 'indian_restaurant': 'Indian', 
-                'indonesian_restaurant': 'Indonesian', 'italian_restaurant': 'Italian', 
-                'japanese_restaurant': 'Japanese', 'korean_restaurant': 'Korean', 
-                'lebanese_restaurant': 'Lebanese', 'meal_delivery': 'Meal Delivery', 
-                'meal_takeaway': 'Meal Takeaway', 'mediterranean_restaurant': 'Mediterranean', 
-                'mexican_restaurant': 'Mexican', 'middle_eastern_restaurant': 'Middle Eastern', 
-                'pizza_restaurant': 'Pizza', 'ramen_restaurant': 'Ramen', 
-                'sandwich_shop': 'Sandwich', 'seafood_restaurant': 'Seafood', 
-                'spanish_restaurant': 'Spanish', 'steak_house': 'Steak House', 
-                'sushi_restaurant': 'Sushi', 'thai_restaurant': 'Thai', 
-                'turkish_restaurant': 'Turkish', 'vegan_restaurant': 'Vegan', 
+                'american_restaurant': 'American', 'bakery': 'Bakery', 'bar': 'Bar',
+                'barbecue_restaurant': 'Barbecue', 'brazilian_restaurant': 'Brazilian',
+                'breakfast_restaurant': 'Breakfast', 'brunch_restaurant': 'Brunch',
+                'cafe': 'Café', 'chinese_restaurant': 'Chinese', 'coffee_shop': 'Coffee Shop',
+                'fast_food_restaurant': 'Fast Food', 'french_restaurant': 'French',
+                'greek_restaurant': 'Greek', 'hamburger_restaurant': 'Hamburger',
+                'ice_cream_shop': 'Ice Cream', 'indian_restaurant': 'Indian',
+                'indonesian_restaurant': 'Indonesian', 'italian_restaurant': 'Italian',
+                'japanese_restaurant': 'Japanese', 'korean_restaurant': 'Korean',
+                'lebanese_restaurant': 'Lebanese', 'meal_delivery': 'Meal Delivery',
+                'meal_takeaway': 'Meal Takeaway', 'mediterranean_restaurant': 'Mediterranean',
+                'mexican_restaurant': 'Mexican', 'middle_eastern_restaurant': 'Middle Eastern',
+                'pizza_restaurant': 'Pizza', 'ramen_restaurant': 'Ramen',
+                'sandwich_shop': 'Sandwich', 'seafood_restaurant': 'Seafood',
+                'spanish_restaurant': 'Spanish', 'steak_house': 'Steak House',
+                'sushi_restaurant': 'Sushi', 'thai_restaurant': 'Thai',
+                'turkish_restaurant': 'Turkish', 'vegan_restaurant': 'Vegan',
                 'vegetarian_restaurant': 'Vegetarian'
             };
-            
+
             const selectedCuisines = place.types
                 .filter(type => allowedCuisines.includes(type))
                 .map(type => cuisineNames[type]);
-            
-            const cuisinesDisplay = selectedCuisines.length > 0 
-                ? selectedCuisines.join(', ') 
+
+            const cuisinesDisplay = selectedCuisines.length > 0
+                ? selectedCuisines.join(', ')
                 : 'Restaurant';
-            
-            //checkIfFavorited(place.id);
-            
+
+            checkIfFavorited(place.id);
+
             document.getElementById('info').innerHTML = `
                 <strong>${place.displayName}</strong><br>
                 <button id="favorite-button" onclick="favoriteRestaurant('${place.id}')">
@@ -492,7 +527,8 @@
                 <strong>Photos:</strong><br>
                     ${photos.length > 0 ? photos.slice(0, 3).map(photo => {
                 const photoUrl = photo.getURI({maxWidth: 400, maxHeight: 400});
-                return `<img src="${photoUrl}" alt="Photo of ${place.name}" style="width: 100%; max-width: 150px; height: auto; margin-bottom: 10px;" onerror="this.style.display='none';">`;}).join('') : 'No photos available.'}<br>
+                return `<img src="${photoUrl}" alt="Photo of ${place.name}" style="width: 100%; max-width: 150px; height: auto; margin-bottom: 10px;" onerror="this.style.display='none';">`;
+            }).join('') : 'No photos available.'}<br>
                 <strong>Reviews:</strong><br>
                     ${place.reviews ? place.reviews.map(review => `
                         <div>
@@ -562,56 +598,56 @@
         restaurantItem.addEventListener('click', function () {
             clearDirections();
             back();
-            
+
             selectedPlace = place.location;
             const photos = place.photos;
-            
+
             const allowedCuisines = [
-                'american_restaurant', 'bakery', 'bar', 'barbecue_restaurant', 
-                'brazilian_restaurant', 'breakfast_restaurant', 'brunch_restaurant', 
-                'cafe', 'chinese_restaurant', 'coffee_shop', 'fast_food_restaurant', 
-                'french_restaurant', 'greek_restaurant', 'hamburger_restaurant', 
-                'ice_cream_shop', 'indian_restaurant', 'indonesian_restaurant', 
-                'italian_restaurant', 'japanese_restaurant', 'korean_restaurant', 
-                'lebanese_restaurant', 'meal_delivery', 'meal_takeaway', 
-                'mediterranean_restaurant', 'mexican_restaurant', 'middle_eastern_restaurant', 
-                'pizza_restaurant', 'ramen_restaurant', 'sandwich_shop', 
-                'seafood_restaurant', 'spanish_restaurant', 'steak_house', 
-                'sushi_restaurant', 'thai_restaurant', 'turkish_restaurant', 
+                'american_restaurant', 'bakery', 'bar', 'barbecue_restaurant',
+                'brazilian_restaurant', 'breakfast_restaurant', 'brunch_restaurant',
+                'cafe', 'chinese_restaurant', 'coffee_shop', 'fast_food_restaurant',
+                'french_restaurant', 'greek_restaurant', 'hamburger_restaurant',
+                'ice_cream_shop', 'indian_restaurant', 'indonesian_restaurant',
+                'italian_restaurant', 'japanese_restaurant', 'korean_restaurant',
+                'lebanese_restaurant', 'meal_delivery', 'meal_takeaway',
+                'mediterranean_restaurant', 'mexican_restaurant', 'middle_eastern_restaurant',
+                'pizza_restaurant', 'ramen_restaurant', 'sandwich_shop',
+                'seafood_restaurant', 'spanish_restaurant', 'steak_house',
+                'sushi_restaurant', 'thai_restaurant', 'turkish_restaurant',
                 'vegan_restaurant', 'vegetarian_restaurant'
             ];
-            
+
             const cuisineNames = {
-                'american_restaurant': 'American', 'bakery': 'Bakery', 'bar': 'Bar', 
-                'barbecue_restaurant': 'Barbecue', 'brazilian_restaurant': 'Brazilian', 
-                'breakfast_restaurant': 'Breakfast', 'brunch_restaurant': 'Brunch', 
-                'cafe': 'Café', 'chinese_restaurant': 'Chinese', 'coffee_shop': 'Coffee Shop', 
-                'fast_food_restaurant': 'Fast Food', 'french_restaurant': 'French', 
-                'greek_restaurant': 'Greek', 'hamburger_restaurant': 'Hamburger', 
-                'ice_cream_shop': 'Ice Cream', 'indian_restaurant': 'Indian', 
-                'indonesian_restaurant': 'Indonesian', 'italian_restaurant': 'Italian', 
-                'japanese_restaurant': 'Japanese', 'korean_restaurant': 'Korean', 
-                'lebanese_restaurant': 'Lebanese', 'meal_delivery': 'Meal Delivery', 
-                'meal_takeaway': 'Meal Takeaway', 'mediterranean_restaurant': 'Mediterranean', 
-                'mexican_restaurant': 'Mexican', 'middle_eastern_restaurant': 'Middle Eastern', 
-                'pizza_restaurant': 'Pizza', 'ramen_restaurant': 'Ramen', 
-                'sandwich_shop': 'Sandwich', 'seafood_restaurant': 'Seafood', 
-                'spanish_restaurant': 'Spanish', 'steak_house': 'Steak House', 
-                'sushi_restaurant': 'Sushi', 'thai_restaurant': 'Thai', 
-                'turkish_restaurant': 'Turkish', 'vegan_restaurant': 'Vegan', 
+                'american_restaurant': 'American', 'bakery': 'Bakery', 'bar': 'Bar',
+                'barbecue_restaurant': 'Barbecue', 'brazilian_restaurant': 'Brazilian',
+                'breakfast_restaurant': 'Breakfast', 'brunch_restaurant': 'Brunch',
+                'cafe': 'Café', 'chinese_restaurant': 'Chinese', 'coffee_shop': 'Coffee Shop',
+                'fast_food_restaurant': 'Fast Food', 'french_restaurant': 'French',
+                'greek_restaurant': 'Greek', 'hamburger_restaurant': 'Hamburger',
+                'ice_cream_shop': 'Ice Cream', 'indian_restaurant': 'Indian',
+                'indonesian_restaurant': 'Indonesian', 'italian_restaurant': 'Italian',
+                'japanese_restaurant': 'Japanese', 'korean_restaurant': 'Korean',
+                'lebanese_restaurant': 'Lebanese', 'meal_delivery': 'Meal Delivery',
+                'meal_takeaway': 'Meal Takeaway', 'mediterranean_restaurant': 'Mediterranean',
+                'mexican_restaurant': 'Mexican', 'middle_eastern_restaurant': 'Middle Eastern',
+                'pizza_restaurant': 'Pizza', 'ramen_restaurant': 'Ramen',
+                'sandwich_shop': 'Sandwich', 'seafood_restaurant': 'Seafood',
+                'spanish_restaurant': 'Spanish', 'steak_house': 'Steak House',
+                'sushi_restaurant': 'Sushi', 'thai_restaurant': 'Thai',
+                'turkish_restaurant': 'Turkish', 'vegan_restaurant': 'Vegan',
                 'vegetarian_restaurant': 'Vegetarian'
             };
-            
+
             const selectedCuisines = place.types
                 .filter(type => allowedCuisines.includes(type))
                 .map(type => cuisineNames[type]);
-            
-            const cuisinesDisplay = selectedCuisines.length > 0 
-                ? selectedCuisines.join(', ') 
+
+            const cuisinesDisplay = selectedCuisines.length > 0
+                ? selectedCuisines.join(', ')
                 : 'Restaurant';
-            
+
             checkIfFavorited(place.id);
-            
+
             document.getElementById('info').innerHTML = `
                 <strong>${place.displayName}</strong><br>
                 <button id="favorite-button" onclick="favoriteRestaurant('${place.id}')">
@@ -624,7 +660,8 @@
                 <strong>Photos:</strong><br>
                     ${photos.length > 0 ? photos.slice(0, 3).map(photo => {
                 const photoUrl = photo.getURI({maxWidth: 400, maxHeight: 400});
-                return `<img src="${photoUrl}" alt="Photo of ${place.name}" style="width: 100%; max-width: 150px; height: auto; margin-bottom: 10px;" onerror="this.style.display='none';">`;}).join('') : 'No photos available.'}<br>
+                return `<img src="${photoUrl}" alt="Photo of ${place.name}" style="width: 100%; max-width: 150px; height: auto; margin-bottom: 10px;" onerror="this.style.display='none';">`;
+            }).join('') : 'No photos available.'}<br>
                 <strong>Reviews:</strong><br>
                     ${place.reviews ? place.reviews.map(review => `
                         <div>
