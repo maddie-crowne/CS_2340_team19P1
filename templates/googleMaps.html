@@ -524,46 +524,61 @@
             checkIfFavorited(place.id);
 
             document.getElementById('info').innerHTML = `
-                <div id="restaurant-details" style="display: flex; flex-direction: column; align-items: flex-start;">
-                    <strong id="restaurant-name">${place.displayName}</strong><br>
-                    <div style="display: flex; align-items: center; margin-bottom: 10px;">
-                        <button id="favorite-button" onclick="favoriteRestaurant('${place.id}')" 
+                <div id="restaurant-details" class="restaurant-details>
+                    <div style="display: flex; margin-bottom: 10px;">
+                        <button id="favorite-button" onclick="favoriteRestaurant('${place.id}')"
                                 style="margin-right: 10px; padding: 10px; border: none; border-radius: 5px; background-color: #007bff; color: white; cursor: pointer;">
                             ${favoriteState ? 'Unfavorite' : 'Favorite'}
                         </button>
-                        <button id="back-button" 
+                        <button id="back-button"
                                 style="padding: 10px; border: none; border-radius: 5px; background-color: #6c757d; color: white; cursor: pointer;">
                             Back
                         </button>
                     </div>
-                        ${photos.length > 0 ? photos.slice(0, 3).map(photo => {
-                            const photoUrl = photo.getURI({maxWidth: 400, maxHeight: 400});
-                            return `<img src="${photoUrl}" alt="Photo of ${place.name}" 
-                                        style="width: 150px; 
-                                               height: 150px; 
-                                               padding: 5px; 
-                                               margin-bottom: 10px; 
-                                               border: 1px solid #ccc; 
-                                               border-radius: 4px; 
-                                               display: inline-block; 
-                                               vertical-align: top; 
-                                               object-fit: cover;" 
-                                        onerror="this.style.display='none';">`;
-                        }).join('') : 'No photos available.'}<br>
-                    <strong>Address:</strong> ${place.formattedAddress || 'N/A'}<br>
-                    <strong>Phone:</strong> ${place.nationalPhoneNumber || 'N/A'}<br>
-                    <strong>Rating:</strong> ${place.rating || 'N/A'}<br>
-                    <strong>Cuisines:</strong> ${cuisinesDisplay}<br>
-
-                    <strong>Reviews:</strong><br>
-                        ${place.reviews ? place.reviews.map(review => `
-                            <div class="review">
-                                <strong>${review.authorAttribution.displayName}</strong><br>
-                                Rating: ${review.rating}<br>
-                                ${review.text}<br><br>
-                            </div>
-                        `).join('') : 'No reviews available.'}
+                    <strong id="restaurant-name" style="font-size: 35px;">${place.displayName}</strong><br>
+                    ${photos.length > 0 ? photos.slice(0, 3).map(photo => {
+                        const photoUrl = photo.getURI({maxWidth: 400, maxHeight: 400});
+                        return `<img src="${photoUrl}" alt="Photo of ${place.name}"
+                                    style="width: 150px;
+                                           height: 150px;
+                                           padding: 5px;
+                                           margin-bottom: 10px;
+                                           border: 1px solid #ccc;
+                                           border-radius: 4px;
+                                           {#display: inline-block; #}
+                                           horizontal-align: left; 
+                                           object-fit: cover;"
+                                    onerror="this.style.display='none';">`;
+                    }).join('') : 'No photos available.'}<br>
+                    <strong style="font-size: 16px;">Address:</strong> <span style="font-size: 14px;">${place.formattedAddress || 'N/A'}</span><br>
+                    <strong style="font-size: 16px;">Phone:</strong> <span style="font-size: 14px;">${place.nationalPhoneNumber || 'N/A'}</span>
+                    <strong style="font-size: 16px;">Rating:</strong> <span style="font-size: 14px;">${place.rating || 'N/A'}</span>
+                    <strong style="font-size: 16px;">Cuisines:</strong> <span style="font-size: 14px;">${cuisinesDisplay|| 'N/A'}</span><
+                    <br><br>
+                    <strong style="font-size: 16px;">Reviews</strong><br>
+                    ${place.reviews ? place.reviews.map(review => `
+                        <div class="review" style="font-size: 15px; 
+                                                    color: white; 
+                                                    margin-bottom: 15px; 
+                                                    padding: 10px; 
+                                                    border: 1px solid #ccc; 
+                                                    background-color: #004d4f;
+                                                    border-radius: 8px;">
+                            <strong style="font-size: 20px; color: white; ">${review.authorAttribution.displayName}</strong><br>
+                            <br>
+                            Rating: ${review.rating}<br>
+                            ${review.text}<br><br>
+                        </div>
+                    `).join('') : 'No reviews available.'}
                 </div>`;
+
+            // Show the sidebar
+            document.getElementById('restaurant-info').style.display = 'block';
+            document.getElementById('restaurant-info').style.width = '30%';
+            document.getElementById('sidebar').style.display = 'none';
+            document.getElementById('map').style.width = '70%';
+            document.getElementById('get-directions-btn').style.display = 'block';
+        });
 
             // Show the sidebar
             document.getElementById('restaurant-info').style.display = 'block';
@@ -675,28 +690,61 @@
             checkIfFavorited(place.id);
 
             document.getElementById('info').innerHTML = `
-                <strong>${place.displayName}</strong><br>
-                <button id="favorite-button" onclick="favoriteRestaurant('${place.id}')">
-                    ${favoriteState ? 'Unfavorite' : 'Favorite'}
-                </button><br>
-                <strong>Address:</strong> ${place.formattedAddress || 'N/A'}<br>
-                <strong>Phone:</strong> ${place.nationalPhoneNumber || 'N/A'}<br>
-                <strong>Rating:</strong> ${place.rating || 'N/A'}<br>
-                <strong>Cuisines:</strong> ${cuisinesDisplay}<br>
-                <strong>Photos:</strong><br>
+                <div id="restaurant-details" class="restaurant-details>
+                    <div style="display: flex; margin-bottom: 10px;">
+                        <button id="favorite-button" onclick="favoriteRestaurant('${place.id}')"
+                                style="margin-right: 10px; padding: 10px; border: none; border-radius: 5px; background-color: #007bff; color: white; cursor: pointer;">
+                            ${favoriteState ? 'Unfavorite' : 'Favorite'}
+                        </button>
+                        <button id="back-button"
+                                style="padding: 10px; border: none; border-radius: 5px; background-color: #6c757d; color: white; cursor: pointer;">
+                            Back
+                        </button>
+                    </div>
+                    <strong id="restaurant-name" style="font-size: 35px;">${place.displayName}</strong><br>
                     ${photos.length > 0 ? photos.slice(0, 3).map(photo => {
-                const photoUrl = photo.getURI({maxWidth: 400, maxHeight: 400});
-                return `<img src="${photoUrl}" alt="Photo of ${place.name}" style="width: 100%; max-width: 150px; height: auto; margin-bottom: 10px;" onerror="this.style.display='none';">`;
-            }).join('') : 'No photos available.'}<br>
-                <strong>Reviews:</strong><br>
+                        const photoUrl = photo.getURI({maxWidth: 400, maxHeight: 400});
+                        return `<img src="${photoUrl}" alt="Photo of ${place.name}"
+                                    style="width: 150px;
+                                           height: 150px;
+                                           padding: 5px;
+                                           margin-bottom: 10px;
+                                           border: 1px solid #ccc;
+                                           border-radius: 4px;
+                                           {#display: inline-block; #}
+                                           horizontal-align: left; 
+                                           object-fit: cover;"
+                                    onerror="this.style.display='none';">`;
+                    }).join('') : 'No photos available.'}<br>
+                    <strong style="font-size: 16px;">Address:</strong> <span style="font-size: 14px;">${place.formattedAddress || 'N/A'}</span><br>
+                    <strong style="font-size: 16px;">Phone:</strong> <span style="font-size: 14px;">${place.nationalPhoneNumber || 'N/A'}</span>
+                    <strong style="font-size: 16px;">Rating:</strong> <span style="font-size: 14px;">${place.rating || 'N/A'}</span>
+                    <strong style="font-size: 16px;">Cuisines:</strong> <span style="font-size: 14px;">${cuisinesDisplay|| 'N/A'}</span><
+                    <br><br>
+                    <strong style="font-size: 16px;">Reviews</strong><br>
                     ${place.reviews ? place.reviews.map(review => `
-                        <div>
-                            <strong>${review.authorAttribution.displayName}</strong><br>
+                        <div class="review" style="font-size: 15px; 
+                                                    color: white; 
+                                                    margin-bottom: 15px; 
+                                                    padding: 10px; 
+                                                    border: 1px solid #ccc; 
+                                                    background-color: #004d4f;
+                                                    border-radius: 8px;">
+                            <strong style="font-size: 20px; color: white; ">${review.authorAttribution.displayName}</strong><br>
+                            <br>
                             Rating: ${review.rating}<br>
                             ${review.text}<br><br>
                         </div>
                     `).join('') : 'No reviews available.'}
-            `;
+                </div>`;
+
+            // Show the sidebar
+            document.getElementById('restaurant-info').style.display = 'block';
+            document.getElementById('restaurant-info').style.width = '30%';
+            document.getElementById('sidebar').style.display = 'none';
+            document.getElementById('map').style.width = '70%';
+            document.getElementById('get-directions-btn').style.display = 'block';
+        });
 
             // Show the sidebar
             document.getElementById('restaurant-info').style.display = 'block';
