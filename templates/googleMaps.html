@@ -526,52 +526,65 @@
             checkIfFavorited(place.id);
 
             document.getElementById('info').innerHTML = `
-                <div id="restaurant-details" class="restaurant-details>
-                    <div style="display: flex; margin-bottom: 10px;">
-                        <button id="favorite-button" onclick="favoriteRestaurant('${place.id}')"
-                                style="margin-right: 10px; padding: 10px; border: none; border-radius: 5px; background-color: #007bff; color: white; cursor: pointer;">
-                            ${favoriteState ? 'Unfavorite' : 'Favorite'}
-                        </button>
-                        <button id="back-button"
+                <div id="restaurant-details" class="restaurant-details">
+                    <div style="display: flex; margin-bottom: 10px; width: 100%;">
+                        <div style="display: flex; width: 50%;">
+                            <button onclick="searchRestaurants()" id="back-button"
                                 style="padding: 10px; border: none; border-radius: 5px; background-color: #6c757d; color: white; cursor: pointer;">
                             Back
                         </button>
+                        </div>
+                        <div style="display: flex; width: 50%; float: right; justify-content: right;">
+                            <button id="favorite-button" onclick="favoriteRestaurant('${place.id}')"
+                                    style="margin-right: 10px; padding: 10px; border: none; border-radius: 5px; background-color: #004d4f; color: white; cursor: pointer;">
+                                ${favoriteState ? 'Unfavorite' : 'Favorite'}
+                            </button>
+                        </div>
                     </div>
-                    <strong id="restaurant-name" style="font-size: 35px;">${place.displayName}</strong><br>
-                    ${photos.length > 0 ? photos.slice(0, 3).map(photo => {
-                        const photoUrl = photo.getURI({maxWidth: 400, maxHeight: 400});
-                        return `<img src="${photoUrl}" alt="Photo of ${place.name}"
-                                    style="width: 150px;
-                                           height: 150px;
-                                           padding: 5px;
-                                           margin-bottom: 10px;
-                                           border: 1px solid #ccc;
-                                           border-radius: 4px;
-                                           {#display: inline-block; #}
-                                           horizontal-align: left; 
-                                           object-fit: cover;"
-                                    onerror="this.style.display='none';">`;
-                    }).join('') : 'No photos available.'}<br>
+                    <div style="overflow: auto; white-space: nowrap;">
+                        ${photos.length > 0 ? photos.slice(0, 3).map(photo => {
+                            const photoUrl = photo.getURI({maxWidth: 400, maxHeight: 400});
+                            return `<img src="${photoUrl}" alt="Photo of ${place.name}"
+                                        style="width: 150px;
+                                               height: 150px;
+                                               padding: 5px;
+                                               margin-bottom: 10px;
+                                               display: inline-block;
+                                               object-fit: cover;"
+                                        onerror="this.style.display='none';">`;
+                        }).join('') : 'No photos available.'}<br>
+                    </div>
+                    <div style="display: flex; text-align: center;">
+                        <strong id="restaurant-name" style="font-size: 30px;">${place.displayName}</strong><br>
+                    </div>
+                    <br>
                     <strong style="font-size: 16px;">Address:</strong> <span style="font-size: 14px;">${place.formattedAddress || 'N/A'}</span><br>
                     <strong style="font-size: 16px;">Phone:</strong> <span style="font-size: 14px;">${place.nationalPhoneNumber || 'N/A'}</span>
                     <strong style="font-size: 16px;">Rating:</strong> <span style="font-size: 14px;">${place.rating || 'N/A'}</span>
                     <strong style="font-size: 16px;">Cuisines:</strong> <span style="font-size: 14px;">${cuisinesDisplay|| 'N/A'}</span><
                     <br><br>
                     <strong style="font-size: 16px;">Reviews</strong><br>
-                    ${place.reviews ? place.reviews.map(review => `
-                        <div class="review" style="font-size: 15px; 
-                                                    color: white; 
-                                                    margin-bottom: 15px; 
-                                                    padding: 10px; 
-                                                    border: 1px solid #ccc; 
-                                                    background-color: #004d4f;
-                                                    border-radius: 8px;">
-                            <strong style="font-size: 20px; color: white; ">${review.authorAttribution.displayName}</strong><br>
-                            <br>
-                            Rating: ${review.rating}<br>
-                            ${review.text}<br><br>
-                        </div>
-                    `).join('') : 'No reviews available.'}
+                    <br>
+                    <div style="overflow-x: auto; display: flex;">
+                        ${place.reviews ? place.reviews.map(review => `
+                            <div class="review" style="font-size: 15px; 
+                                                       color: white; 
+                                                       margin: 0 15px 15px 0; 
+                                                       padding: 10px; 
+                                                       border: 1px solid #ccc; 
+                                                       background-color: #004d4f; 
+                                                       border-radius: 8px; 
+                                                       max-height: 250px;
+                                                       min-width: 350px;
+                                                       word-wrap: break-word; /* Ensures words wrap */
+                                                       overflow-wrap: break-word;
+                                                       overflow-y: auto;">
+                                <strong style="font-size: 20px; color: white;">${review.authorAttribution.displayName}</strong><br><br>
+                                Rating: ${review.rating} ⭐<br>
+                                ${review.text}<br><br>
+                            </div>
+                        `).join('') : 'No reviews available.'}
+                    </div>
                 </div>`;
 
             // Show the sidebar
@@ -692,52 +705,65 @@
             checkIfFavorited(place.id);
 
             document.getElementById('info').innerHTML = `
-                <div id="restaurant-details" class="restaurant-details>
-                    <div style="display: flex; margin-bottom: 10px;">
-                        <button id="favorite-button" onclick="favoriteRestaurant('${place.id}')"
-                                style="margin-right: 10px; padding: 10px; border: none; border-radius: 5px; background-color: #007bff; color: white; cursor: pointer;">
-                            ${favoriteState ? 'Unfavorite' : 'Favorite'}
-                        </button>
-                        <button id="back-button"
+                <div id="restaurant-details" class="restaurant-details">
+                    <div style="display: flex; margin-bottom: 10px; width: 100%;">
+                        <div style="display: flex; width: 50%;">
+                            <button onclick="searchRestaurants()" id="back-button"
                                 style="padding: 10px; border: none; border-radius: 5px; background-color: #6c757d; color: white; cursor: pointer;">
                             Back
                         </button>
+                        </div>
+                        <div style="display: flex; width: 50%; float: right; justify-content: right;">
+                            <button id="favorite-button" onclick="favoriteRestaurant('${place.id}')"
+                                    style="margin-right: 10px; padding: 10px; border: none; border-radius: 5px; background-color: #004d4f; color: white; cursor: pointer;">
+                                ${favoriteState ? 'Unfavorite' : 'Favorite'}
+                            </button>
+                        </div>
                     </div>
-                    <strong id="restaurant-name" style="font-size: 35px;">${place.displayName}</strong><br>
-                    ${photos.length > 0 ? photos.slice(0, 3).map(photo => {
-                        const photoUrl = photo.getURI({maxWidth: 400, maxHeight: 400});
-                        return `<img src="${photoUrl}" alt="Photo of ${place.name}"
-                                    style="width: 150px;
-                                           height: 150px;
-                                           padding: 5px;
-                                           margin-bottom: 10px;
-                                           border: 1px solid #ccc;
-                                           border-radius: 4px;
-                                           {#display: inline-block; #}
-                                           horizontal-align: left; 
-                                           object-fit: cover;"
-                                    onerror="this.style.display='none';">`;
-                    }).join('') : 'No photos available.'}<br>
+                    <div style="overflow: auto; white-space: nowrap;">
+                        ${photos.length > 0 ? photos.slice(0, 3).map(photo => {
+                            const photoUrl = photo.getURI({maxWidth: 400, maxHeight: 400});
+                            return `<img src="${photoUrl}" alt="Photo of ${place.name}"
+                                        style="width: 150px;
+                                               height: 150px;
+                                               padding: 5px;
+                                               margin-bottom: 10px;
+                                               display: inline-block;
+                                               object-fit: cover;"
+                                        onerror="this.style.display='none';">`;
+                        }).join('') : 'No photos available.'}<br>
+                    </div>
+                    <div style="display: flex; text-align: center;">
+                        <strong id="restaurant-name" style="font-size: 30px;">${place.displayName}</strong><br>
+                    </div>
+                    <br>
                     <strong style="font-size: 16px;">Address:</strong> <span style="font-size: 14px;">${place.formattedAddress || 'N/A'}</span><br>
                     <strong style="font-size: 16px;">Phone:</strong> <span style="font-size: 14px;">${place.nationalPhoneNumber || 'N/A'}</span>
                     <strong style="font-size: 16px;">Rating:</strong> <span style="font-size: 14px;">${place.rating || 'N/A'}</span>
                     <strong style="font-size: 16px;">Cuisines:</strong> <span style="font-size: 14px;">${cuisinesDisplay|| 'N/A'}</span><
                     <br><br>
                     <strong style="font-size: 16px;">Reviews</strong><br>
-                    ${place.reviews ? place.reviews.map(review => `
-                        <div class="review" style="font-size: 15px; 
-                                                    color: white; 
-                                                    margin-bottom: 15px; 
-                                                    padding: 10px; 
-                                                    border: 1px solid #ccc; 
-                                                    background-color: #004d4f;
-                                                    border-radius: 8px;">
-                            <strong style="font-size: 20px; color: white; ">${review.authorAttribution.displayName}</strong><br>
-                            <br>
-                            Rating: ${review.rating}<br>
-                            ${review.text}<br><br>
-                        </div>
-                    `).join('') : 'No reviews available.'}
+                    <br>
+                    <div style="overflow-x: auto; display: flex;">
+                        ${place.reviews ? place.reviews.map(review => `
+                            <div class="review" style="font-size: 15px; 
+                                                       color: white; 
+                                                       margin: 0 15px 15px 0; 
+                                                       padding: 10px; 
+                                                       border: 1px solid #ccc; 
+                                                       background-color: #004d4f; 
+                                                       border-radius: 8px; 
+                                                       max-height: 250px;
+                                                       min-width: 350px;
+                                                       word-wrap: break-word; /* Ensures words wrap */
+                                                       overflow-wrap: break-word;
+                                                       overflow-y: auto;">
+                                <strong style="font-size: 20px; color: white;">${review.authorAttribution.displayName}</strong><br><br>
+                                Rating: ${review.rating} ⭐<br>
+                                ${review.text}<br><br>
+                            </div>
+                        `).join('') : 'No reviews available.'}
+                    </div>
                 </div>`;
 
             // Show the sidebar
