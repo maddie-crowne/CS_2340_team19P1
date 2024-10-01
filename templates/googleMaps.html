@@ -198,6 +198,7 @@
 
         #rating-filter {
             float: right;
+            margin: 10px 20px;
         }
 
         #favorite-button {
@@ -370,15 +371,6 @@
         // Toggle the display of the dropdown
         dropdown.style.display = dropdown.style.display === 'none' || dropdown.style.display === '' ? 'flex' : 'none';
     }
-
-    // Optional: Close dropdown if clicked outside
-    window.onclick = function (event) {
-        const dropdown = document.getElementById('filter-dropdown');
-        if (!event.target.matches('.filter-button') && !event.target.matches('#filter-dropdown') && dropdown.style.display === 'flex') {
-            dropdown.style.display = 'none';
-        }
-    }
-
 
     // Function to search for restaurants based on user input and filter
     async function searchRestaurants() {
