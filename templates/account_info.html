@@ -2,111 +2,221 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Account Info</title>
+    {%  load static %}
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            display: flex; /* Use flexbox for layout */
-            padding: 20px;
+            width: 100vw; /* Full viewport width */
             height: 100vh; /* Full viewport height */
-            margin: 0; /* Remove default margin */
+            display: flex;
+            flex-direction: column;
+            font-family: 'Inter', sans-serif;
+            background-color: #F7F7F7;
+            margin: 0;
         }
-        .sidebar {
-            width: 50%; /* Width for the sidebar */
-            background-color: #f4f4f4;
-            padding: 10px;
-            border-radius: 8px;
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
-            overflow-y: auto; /* Scroll if content overflows */
-            margin-right: 20px; /* Space between sidebar and content */
-        }
-        .sidebar ul {
-            list-style-type: none; /* Remove bullet points */
-            padding: 0; /* Remove default padding */
-            margin: 0; /* Remove default margin */
-        }
-        .content {
-            flex-grow: 1; /* Allow content to take up remaining space */
-            background-color: white;
-            padding: 10px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        h2 {
-            color: #333;
-        }
-        h3 {
-            margin-top: 20px; /* Space above the h3 */
-        }
-        .user-info {
-            margin-bottom: 20px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        input {
+        .title-bar {
             width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            font-size: 28px;
+            justify-content: center;
+            align-content: center;
+            align-self: center;
         }
-        button {
-            padding: 10px 15px;
-            background-color: #007BFF;
-            color: white;
+        .back-button {
+            background: white;
             border: none;
             border-radius: 5px;
+            padding: 5px;
+            color: var(--text-color);
+            margin: 25px;
+            text-align: center;
             cursor: pointer;
+            font-size: 18px;
+            height: 25px;
         }
-        button:hover {
-            background-color: #0056b3;
+        .back-button a {
+            color: #1e1e1e;
+            text-decoration: none;
+            font-family: Inter, var(--default-font-family);
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 16px;
         }
-        .restaurant-item {
-            cursor: pointer;
-            padding: 10px;
-            border-bottom: 1px solid #ccc;
+        .header {
+            color: white;
+            text-align: center;
+            background-color: #002b2d;
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            margin-bottom: 15px;
         }
-        .restaurant-item:hover {
-            background-color: #ddd;
+        .header img {
+            height: 150px; /* Adjust logo height */
         }
-        .user-info {
-            margin-bottom: 20px;
+        .container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            flex: 1;
         }
-        .info-label {
+        .favorites-container {
+            justify-content: center;
+            margin-right: 15px;
+            margin-left: 15px;
+            display: flex;
+            flex-direction: column;
+            flex: 1.5; /* Adjusted width of favorites section */
+            width: 100%;
+            background-color: #FFFFFF;
+            border-right: 1px solid #DDDDDD;
+            overflow-y: auto; /* Enables vertical scrolling */
+            height: 100%;
+        }
+        .fav-header {
+            font-size: 16px;
+            background-color: #004d4f;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            margin-top: 15px;
+            padding: 5px;
+            justify-content: center;
+            text-align: center;
+            align-content: center;
+            align-self: center;
+            align-items: center;
+            color: white;
+            width: 60%;
+        }
+        .restaurant-card {
+            background-color: #004d4f;
+            border: 1px solid #DDDDDD;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            padding: 15px; /* Increased padding for taller cards */
+            display: flex;
+            height: 100px;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);/* Fixed height for restaurant cards */
+        }
+        .restaurant-card img {
+            width: 150px; /* Image width */
+            max-height: 100px; /* Image height */
+            border-radius: 5px;
+            margin-left: 15px;
+            margin-right: 15px; /* Add margin to push it 15px from the right edge */
+        }
+        .restaurant-card h3 {
+            color: white;
+            margin: 0 0 5px 0;
+            font-size: 30px;
             font-weight: bold;
         }
+        .restaurant-card p {
+            margin: 0;
+            color: #fffdfd;
+            font-size: 20px;
+        }
+        .star-rating {
+            color: gold;
+            margin: 10px 0;
+        }
+        .header h1 {
+            margin: 0;
+        }
+        .account-details {
+            flex: 1; /* Maintain width of account details section */
+            background-color: #004d4f; /* Account details section color */
+            border-left: 1px solid var(--text-color);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            padding-top: 25px;
+            align-items: center;
+        }
+        .account-info {
+            display: flex;
+            flex-direction: column;
+        }
+        .name {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .account-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+            margin-top: 0;
+            color: white;
+        }
+        .back-button:hover {
+            background-color: rgba(174, 174, 174, 0.2); /* Slightly lighter background */
+            transition: background-color 0.3s; /* Smooth transition */
+        }
+
+        /* Restaurant Card Hover */
+        .restaurant-card:hover {
+            background-color: #ececec; /* Darker shade for hover effect */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Enhanced shadow effect */
+            transition: background-color 0.3s, box-shadow 0.3s; /* Smooth transition */
+        }
+        /* Restaurant Name Hover */
+        .restaurant h3:hover {
+            color: #FFD700; /* Change text color on hover */
+            transition: color 0.3s; /* Smooth transition */
+        }
+
     </style>
 </head>
 <body>
-    <div class="sidebar">
-        <h3>Your Favorite Restaurants</h3>
-        <ul>
-            {% for favorite in favorites %}
-                <li class="restaurant-item">
-                    <a href="/googleMaps/?place_id={{ favorite.place_id }}" style="text-decoration: none; color: inherit;">
-                        <strong>{{ favorite.name }}</strong><br>
-                        {{ favorite.address }}<br>
-                        Rating: {{ favorite.rating }}<br>
-                        <img src="{{ favorite.picture_url }}" alt="{{ favorite.name }}" style="max-width: 100%; height: auto;">
-                    </a>
-                </li>
-            {% empty %}
-                <li>No favorite restaurants added.</li>
-            {% endfor %}
-        </ul>
+    <div class="header">
+        <button class="back-button">
+            <a href="{% url 'googleMaps:googleMaps' %}">Back</a>
+        </button>
+        <div class="title-bar">
+            <img src="{% static 'images/logo.png' %}" alt="logo"> <!-- Replace with your logo URL -->
+            <h1>ATLGrub</h1>
+        </div>
     </div>
+    <div class="container">
+        <div class="favorites-container">
+            <div class="fav-header">
+                <h1>Favorites</h1>
+            </div>
+            <div class="favorites-list">
+                {% for favorite in favorites %}
+                    <div class="restaurant-card">
+                        <a href="/googleMaps/?place_id={{ favorite.place_id }}" style="text-decoration: none; color: inherit;">
+                            <div>
+                                <h3>{{ favorite.name }}</h3>
+                                <p>{{ favorite.address }}</p>
+                                <div class = "star-rating">Rating: {{ favorite.rating }} ⭐</div>
+                            </div>
+                        </a>
+                        <img src="{{ favorite.picture_url }}" alt="{{ favorite.name }}" style="max-width: 100%; height: auto;">
+                    </div>
+                {% empty %}
+                    <li>No favorite restaurants added.</li>
+                {% endfor %}
+            </div>
+        </div>
     
-    <div class="content">
-        <h2>Account Information</h2>
-        <div class="user-info">
-            <p><span class="info-label">Username:</span> {{ user.username }}</p>
-            <p><span class="info-label">First Name:</span> {{ user.first_name }}</p>
-            <p><span class="info-label">Last Name:</span> {{ user.last_name }}</p>
-            <p><span class="info-label">Email:</span> {{ user.email }}</p>
+        <div class="account-details">
+            <h2>Account Details</h2>
+            <img src="{% static 'images/account.png' %}" alt="logo" class="account-avatar">
+            <div class="name">
+                <p><span class="info-label"></span> {{ user.first_name }} {{ user.last_name }}</p>
+            </div>
+            <div class="account-info">
+                <p><span class="info-label">Username:</span> {{ user.username }}</p>
+                <p><span class="info-label">Email:</span> {{ user.email }}</p>
+            </div>
         </div>
     </div>
 </body>
