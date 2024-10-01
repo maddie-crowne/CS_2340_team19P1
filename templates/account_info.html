@@ -64,17 +64,18 @@
             flex: 1;
         }
         .favorites-container {
-            justify-content: center;
+            flex: 1.5; /* Adjust this to set the width of the favorites section */
+            padding: 20px;
             margin-right: 15px;
             margin-left: 15px;
             display: flex;
-            flex-direction: column;
-            flex: 1.5; /* Adjusted width of favorites section */
+            flex-direction: column; /* Stack children vertically */
             width: 100%;
             background-color: #FFFFFF;
             border-right: 1px solid #DDDDDD;
-            overflow-y: auto; /* Enables vertical scrolling */
+            overflow-y: auto;
             height: 100%;
+            justify-content: flex-start; /* Align children to the top */
         }
         .fav-header {
             font-size: 16px;

@@ -326,9 +326,7 @@
             zoom: 12,
             center: atlanta
         });
-
-        //service = new google.maps.places.PlacesService(map);
-
+        
         // Initial search for restaurants
         searchRestaurants();
     }
@@ -380,7 +378,7 @@
         clearDirections();
         back();
 
-        const searchTerm = document.getElementById('search').value || 'restaurants in Atlanta';
+        const searchTerm = document.getElementById('search').value || "restaurant";
         const maxDistance = parseFloat(document.getElementById('max-distance').value);
         const minRating = parseFloat(document.getElementById('min-rating').value);
 
@@ -390,8 +388,8 @@
             fields: ["displayName", "location", "formattedAddress", "nationalPhoneNumber", 
                         "rating", "photos", "types", "reviews"],
             includedType: "restaurant",
-            locationBias: {lat: 37.7937, lng: -122.3965},
-            maxResultCount: 5,
+            locationBias: userLocation,
+            maxResultCount: 2,
             minRating: minRating,
             region: "us",
             useStrictTypeFiltering: true,
@@ -402,17 +400,13 @@
             console.error("No restaurants found.");
         } else {
             places.forEach(place => {
-                if (place.rating >= minRating) {
-                    const distance = google.maps.geometry.spherical.computeDistanceBetween(
-                        place.location,
-                        userLocation || map.getCenter()  // Use user's location or the center of the map
-                    );
-
-                    if (distance <= maxDistance) {
-                        createMarker(place);
-                    }
-                } else {
-                    console.error("Search failed: " + status);
+                const distance = google.maps.geometry.spherical.computeDistanceBetween(
+                    place.location,
+                    userLocation || map.getCenter()  // Use user's location or the center of the map
+                );
+                
+                if (distance <= maxDistance) {
+                    createMarker(place);
                 }
             });
         }
@@ -616,7 +610,7 @@
                 ? selectedCuisines.join(', ') 
                 : 'Restaurant';
             
-            //checkIfFavorited(place.id);
+            checkIfFavorited(place.id);
             
             document.getElementById('info').innerHTML = `
                 <strong>${place.displayName}</strong><br>
