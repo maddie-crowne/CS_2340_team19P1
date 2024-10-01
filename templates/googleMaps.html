@@ -182,7 +182,6 @@
             z-index: 1; /* Ensure it appears on top */
             margin-top: 5px; /* Space from the button */
             display: none; /* Initially hidden */
-            flex-direction: column; /* Vertical layout */
             width: 50%; /* Width of dropdown */
         }
 
@@ -193,11 +192,13 @@
 
         #distance-filter {
             float: left;
+            width: 50%;
             margin: 10px 20px;
         }
 
         #rating-filter {
             float: right;
+            width: 50%;
             margin: 10px 20px;
         }
 
@@ -242,23 +243,27 @@
         <!-- Filter dropdown (initially hidden) -->
         <div id="filter-dropdown" class="filter-dropdown">
             <div id="distance-filter">
-                <label for="max-distance">Max Distance:</label>
-                <select id="max-distance" name="max-distance">
-                    <option value="1609.34">1 mile</option>
-                    <option value="8046.72">5 miles</option>
-                    <option value="16093.4">10 miles</option>
-                    <option value="24140.2">15 miles</option>
-                </select>
+                <label>Distance</label><br><br>
+                <input type="radio" id="1-mile" name="max-distance" value="1609.34">
+                <label for="1-mile">1 mile</label><br>
+                <input type="radio" id="5-miles" name="max-distance" value="8046.72">
+                <label for="5-miles">5 miles</label><br>
+                <input type="radio" id="10-miles" name="max-distance" value="16093.4">
+                <label for="10-miles">10 miles</label><br>
+                <input type="radio" id="15-miles" name="max-distance" value="24140.2">
+                <label for="15-miles">15 miles</label><br>
             </div>
+
             <div id="rating-filter">
-                <label for="min-rating">Select Min Rating:</label>
-                <select id="min-rating" name="min-rating">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                </select>
+                <label>Ratings</label><br><br>
+                <input type="radio" id="rating-1" name="min-rating" value="1">
+                <label for="rating-1">⭐</label><br>
+                <input type="radio" id="rating-2" name="min-rating" value="2">
+                <label for="rating-2">⭐⭐</label><br>
+                <input type="radio" id="rating-3" name="min-rating" value="3">
+                <label for="rating-3">⭐⭐⭐</label><br>
+                <input type="radio" id="rating-4" name="min-rating" value="4">
+                <label for="rating-4">⭐⭐⭐⭐</label><br>
             </div>
         </div>
         <input id="search" type="text" placeholder="Search for restaurants...">
@@ -380,8 +385,8 @@
         back();
 
         const searchTerm = document.getElementById('search').value || "restaurant";
-        const maxDistance = parseFloat(document.getElementById('max-distance').value);
-        const minRating = parseFloat(document.getElementById('min-rating').value);
+        const maxDistance = parseFloat(document.querySelector('input[name="max-distance"]:checked').value);
+        const minRating = parseFloat(document.querySelector('input[name="min-rating"]:checked').value);
         let request = null;
 
         const {Place} = await google.maps.importLibrary("places");
