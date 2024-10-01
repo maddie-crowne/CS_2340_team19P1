@@ -6,149 +6,9 @@
     <title>Start Page</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mingzat:wght@400&display=swap" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap" />
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'register.css' %}">
   </head>
-  <style>
-      :root {
-          --default-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-            Ubuntu, "Helvetica Neue", Helvetica, Arial, "PingFang SC",
-            "Hiragino Sans GB", "Microsoft Yahei UI", "Microsoft Yahei",
-            "Source Han Sans CN", sans-serif;
-        }
-
-        body, html {
-          margin: 0;
-          padding: 0;
-          height: 100%;
-          width: 100%;
-          bottom: 0;
-          left: 0;
-/*           background: url(../googleMaps/static/images/istockphoto-1829241109-612x612.jpg) no-repeat center center; */
-          background-size: cover;
-        }
-
-        .main-container {
-            display: flex;
-            flex-direction: column;
-            width: 100vw;
-            height: 100vh;
-            position: relative;
-            margin-top: 75px;
-            background: #ffffff;
-            z-index: 2;
-            overflow-y: auto;
-        }
-
-        .container {
-            flex: 1;
-            overflow-y: auto;
-            padding-top: 10%; /* Add space so the content isn't hidden behind the header */
-        }
-        
-        .sign-up-title {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 100%;
-          margin-top: 20px;
-          color: #000000;
-          font-family: Mingzat, var(--default-font-family), serif;
-          font-size: 50px;
-          font-weight: 400;
-          text-align: center;
-        }
-
-        .form-container {
-            margin: 100px auto;
-            padding: 30px;
-            max-width: 400px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: rgba(249, 249, 249, 0.9);
-        }
-
-        .form-container button {
-            color: white;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .form-container input, .form-container select {
-            width: calc(100% - 20px);
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        .register-button {
-            width: 100%;
-            height: 50px;
-            margin-top: 20px;
-            cursor: pointer;
-            background: #0d99ff;
-            border: none;
-            border-radius: 27.666px;
-            color: white;
-            font-size: 25px;
-        }
-
-        .rectangular-banner {
-          position: fixed; /* Fix the header */
-          width: 100%;
-          height: 10%;
-          top: 0;
-          left: 0;
-          background: #043d49;
-          z-index: 21;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          padding: 20px 0 20px 0;
-        }
-        
-        .atl-grub {
-          color: #ffffff;
-          font-family: Mingzat, var(--default-font-family), serif;
-          font-size: 5vw;
-          font-weight: 400;
-          text-align: center;
-          position: absolute;
-          left: 50%;
-          transform: translateX(-50%);
-        }
-        
-        .back-button-div {
-          position: absolute;
-          left: 20px;
-        }
-        
-        .back-button {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          width: 75px;
-          height: 50px;
-          background: #e6e6e6;
-          border: none;
-          border-radius: 8px;
-          font-size: 18px;
-          cursor: pointer;
-        }
-        
-        .icon {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-        }
-        
-        .back-button-div a {
-            text-decoration: none;
-        }
-
-  </style>
   <body>
     <div class="main-container">
         <div>
@@ -169,8 +29,9 @@
                 </button>
             </a>
         </div>
-        <span class="atl-grub">ATLGRUB</span>
         <div class="icon"></div>
+        <div class="atl-grub-logo"></div>
+        <span class="atl-grub">ATLGRUB</span>
     </div>
   </body>
 </html>
