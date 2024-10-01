@@ -1,0 +1,387 @@
+:root {
+  --default-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Ubuntu, "Helvetica Neue", Helvetica, Arial, "PingFang SC",
+    "Hiragino Sans GB", "Microsoft Yahei UI", "Microsoft Yahei",
+    "Source Han Sans CN", sans-serif;
+}
+
+/* Global Styles */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  font-family: var(--default-font-family);
+}
+
+/* Main Container */
+.main-container {
+  position: relative;
+  width: 100vw; /* Full viewport width */
+  height: 100vh; /* Full viewport height */
+  background-image: url('../static/images/LoginBackground1.jpg');
+  background-size: cover; /* Ensure background covers entire container */
+  overflow: hidden; /* Prevent scrollbars */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Title Bar */
+.rectangular-banner {
+  position: fixed; /* Fixed at the top */
+  top: 0;
+  left: 0;
+  width: 100%; /* Full width */
+  height: 145px; /* Fixed height */
+  background: #043d49;
+  z-index: 12;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.atl-grub {
+  color: #ffffff;
+  font-family: Mingzat, var(--default-font-family);
+  font-size: 64px;
+  font-weight: 400;
+  line-height: 96px;
+  text-align: center;
+  white-space: nowrap;
+  letter-spacing: -0.7px;
+}
+
+/* Back Button */
+.back-button {
+  position: absolute;
+  top: 44px;
+  left: 94.415px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 93.585px;
+  height: 60.377px;
+  padding: 12px;
+  background: #e6e6e6;
+  border-radius: 8px;
+  cursor: pointer;
+  z-index: 16;
+}
+.back-button a {
+  color: #1e1e1e;
+  text-decoration: none;
+  font-family: Inter, var(--default-font-family);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 16px;
+}
+
+.button {
+  color: #1e1e1e;
+  font-family: Inter, var(--default-font-family);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 16px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+/* Icon */
+.icon {
+  position: absolute;
+  width: 24.151px;
+  height: 24.151px;
+  top: 62.113px;
+  left: 48.038px;
+  background-size: 100% 100%;
+  z-index: 19;
+}
+
+/* Logo */
+.atl-grub-logo {
+  position: absolute;
+  width: 208px;
+  height: 139px;
+  top: 6px;
+  left: 30%;
+  transform: translateX(-50%);
+  background: url('images/logo.png') no-repeat center;
+  background-size: cover;
+  z-index: 13;
+}
+
+/* Login Panel */
+.login-panel {
+  width: 900px; /* Increased width */
+  max-width: 90%; /* Responsive */
+  background: #ffffff;
+  z-index: 2;
+  overflow: hidden; /* Prevent scrolling */
+  border-radius: 65px;
+  padding: 20px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch; /* Children stretch to full width */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+/* Login Title */
+.login-title {
+  font-family: Mingzat, var(--default-font-family);
+  font-size: 32px; /* Adjusted font size */
+  font-weight: 400;
+  color: #000000;
+  text-align: center;
+  letter-spacing: -1.06px;
+  margin: 20px auto; /* Centers the title and adds vertical spacing */
+  z-index: 10;
+}
+
+/* Input Fields */
+.email-input,
+.password-input {
+  width: 100%;
+  height: 60px; /* Fixed height */
+  margin: 10px 0; /* Vertical spacing */
+  background: #e8e8e8;
+  border-radius: 34.204px;
+  display: flex;
+  align-items: center;
+  padding: 0 10px; /* Reduced horizontal padding for wider inputs */
+  z-index: 3;
+}
+
+.email-input input,
+.password-input input {
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 34.204px;
+  padding: 0 10px; /* Consistent padding */
+  font-size: 20px; /* Increased font size for readability */
+  background: transparent;
+}
+
+/* Forgot Password Button */
+.forgot-password-button {
+  width: 152px;
+  margin: 10px auto 0 auto; /* Centers the button */
+  padding: 8px;
+  border-radius: 8px;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.forgot-password-button a {
+  color: #1e1e1e;
+  text-decoration: none;
+  font-family: Inter, var(--default-font-family);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 16px;
+}
+
+.forgot-password-button a:hover {
+  text-decoration: underline;
+}
+
+/* Sign-In Button */
+.sign-in-button {
+  width: 100%;
+  height: 60px; /* Adjusted height */
+  margin: 10px 0 0 0; /* Top margin */
+  background: #0d99ff;
+  border-radius: 27.363px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sign-in-button button {
+  width: 90%;
+  height: 80%;
+  border: none;
+  border-radius: 27.363px;
+  background: none;
+  color: white;
+  font-size: 24px; /* Adjusted font size */
+  cursor: pointer;
+}
+
+/* Register Section */
+.register-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 307px;
+  margin: 20px auto 0 auto; /* Centers the register section */
+  padding: 8px;
+  border-radius: 8px;
+  z-index: 8;
+}
+
+.title-1 {
+  font-family: Inter, var(--default-font-family);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 16px;
+  text-align: center;
+  width: 291px;
+  white-space: nowrap;
+  z-index: 9;
+}
+
+.no-account {
+  color: #1e1e1e;
+  font-family: Inter, var(--default-font-family);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 16px;
+}
+
+.register-link {
+  color: #8f0b09;
+  font-family: Inter, var(--default-font-family);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 16px;
+  text-align: left;
+  margin-top: 8px; /* Spacing above the link */
+  display: inline-block; /* Ensures proper spacing */
+}
+
+.register-link:hover {
+  text-decoration: underline;
+}
+
+/* Visually Hidden Class for Accessibility */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Input Focus Styling */
+.email-input input:focus,
+.password-input input:focus {
+  outline: none;
+  box-shadow: 0 0 5px rgba(13, 153, 255, 0.5);
+}
+
+/* Responsive Design */
+@media (max-width: 1920px) {
+  .main-container {
+      width: 100%;
+      height: 100vh; /* Full viewport height */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding-top: 145px; /* Accounts for the fixed title bar */
+  }
+
+  .login-panel {
+      width: 900px; /* Maintains increased width */
+      height: 629px; /* Fixed height */
+      background: #ffffff;
+      z-index: 2;
+      overflow: hidden; /* Prevent scrolling */
+      border-radius: 65px;
+      padding: 20px;
+      box-sizing: border-box; /* Includes padding within height */
+      display: flex;
+      flex-direction: column;
+      align-items: stretch; /* Allows children to stretch to full width */
+      justify-content: space-between; /* Distributes space evenly */
+      margin: 0; /* Removes margin as Flexbox handles centering */
+  }
+
+  .email-input,
+  .password-input {
+      width: 100%;
+  }
+
+  .forgot-password-button {
+      margin: 10px auto 0 auto;
+  }
+
+  .sign-in-button {
+      width: 100%;
+  }
+}
+
+/* Additional Responsive Breakpoints (Optional) */
+@media (max-width: 1200px) {
+  .login-panel {
+      width: 80%;
+  }
+}
+
+@media (max-width: 768px) {
+  .rectangular-banner {
+      height: 120px;
+  }
+
+  .atl-grub {
+      font-size: 48px;
+  }
+
+  .login-panel {
+      width: 100%;
+      height: auto; /* Allows height to adjust based on content */
+      border-radius: 40px;
+      padding: 15px;
+  }
+
+  .login-title {
+      font-size: 28px;
+      margin: 15px auto;
+  }
+
+  .email-input,
+  .password-input {
+      height: 50px;
+      font-size: 18px;
+  }
+
+  .sign-in-button {
+      height: 50px;
+  }
+
+  .sign-in-button button {
+      font-size: 20px;
+  }
+
+  .register-button {
+      width: 80%;
+  }
+
+  .title-1 {
+      font-size: 14px;
+  }
+
+  .register-link {
+      font-size: 14px;
+  }
+
+  .forgot-password-button {
+      width: 120px;
+  }
+}
