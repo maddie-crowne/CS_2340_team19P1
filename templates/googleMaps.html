@@ -71,15 +71,16 @@
             height: 100%; /* Full height */
             width: 30%; /* 30% for the sidebar */
             background-color: #f4f4f4;
-            padding: 10px;
             margin-left: 10px;
-            margin-right: 10px;
+            margin-top: 125px;
             box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
             overflow-y: auto; /* Scroll if content overflows */
             position: absolute;
             top: 0;
             right: 0;
             z-index: 1; /* Ensure sidebar is above the map */
+            padding: 20px; /* Padding inside the info box */
+            font-family: Arial, sans-serif; /* Font style */
         }
 
         #restaurant-title {
@@ -90,22 +91,6 @@
             color: white;
             border-radius: 8px; /* Adds rounded corners */
             align-items: center;
-        }
-
-        #restaurant-info {
-            display: none;
-            height: 100%; /* Full height */
-            width: 30%; /* 30% for the sidebar */
-            background-color: #f4f4f4;
-            padding: 10px;
-            margin-left: 10px;
-            margin-right: 10px;
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
-            overflow-y: auto; /* Scroll if content overflows */
-            position: absolute;
-            top: 0;
-            right: 0;
-            z-index: 1; /* Ensure sidebar is above the map */
         }
 
         #sidebar {
@@ -212,6 +197,29 @@
 
         #rating-filter {
             float: right;
+        }
+
+        #favorite-button {
+            background-color: #007BFF; /* Button color */
+            color: white; /* Button text color */
+            border: none; /* No border */
+            border-radius: 4px; /* Rounded corners */
+            padding: 8px 12px; /* Padding for the button */
+            cursor: pointer; /* Pointer cursor on hover */
+        }
+
+        #favorite-button:hover {
+            background-color: #0056b3; /* Darker button color on hover */
+        }
+
+        strong {
+            color: #333; /* Color for strong text */
+            margin-right: 5px; /* Space between label and content */
+        }
+
+        img {
+            border-radius: 4px; /* Rounded corners for images */
+            margin-bottom: 10px; /* Space below images */
         }
 
 
@@ -516,28 +524,46 @@
             checkIfFavorited(place.id);
 
             document.getElementById('info').innerHTML = `
-                <strong>${place.displayName}</strong><br>
-                <button id="favorite-button" onclick="favoriteRestaurant('${place.id}')">
-                    ${favoriteState ? 'Unfavorite' : 'Favorite'}
-                </button><br>
-                <strong>Address:</strong> ${place.formattedAddress || 'N/A'}<br>
-                <strong>Phone:</strong> ${place.nationalPhoneNumber || 'N/A'}<br>
-                <strong>Rating:</strong> ${place.rating || 'N/A'}<br>
-                <strong>Cuisines:</strong> ${cuisinesDisplay}<br>
-                <strong>Photos:</strong><br>
-                    ${photos.length > 0 ? photos.slice(0, 3).map(photo => {
-                const photoUrl = photo.getURI({maxWidth: 400, maxHeight: 400});
-                return `<img src="${photoUrl}" alt="Photo of ${place.name}" style="width: 100%; max-width: 150px; height: auto; margin-bottom: 10px;" onerror="this.style.display='none';">`;
-            }).join('') : 'No photos available.'}<br>
-                <strong>Reviews:</strong><br>
-                    ${place.reviews ? place.reviews.map(review => `
-                        <div>
-                            <strong>${review.authorAttribution.displayName}</strong><br>
-                            Rating: ${review.rating}<br>
-                            ${review.text}<br><br>
-                        </div>
-                    `).join('') : 'No reviews available.'}
-            `;
+                <div id="restaurant-details" style="display: flex; flex-direction: column; align-items: flex-start;">
+                    <strong id="restaurant-name">${place.displayName}</strong><br>
+                    <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                        <button id="favorite-button" onclick="favoriteRestaurant('${place.id}')" 
+                                style="margin-right: 10px; padding: 10px; border: none; border-radius: 5px; background-color: #007bff; color: white; cursor: pointer;">
+                            ${favoriteState ? 'Unfavorite' : 'Favorite'}
+                        </button>
+                        <button id="back-button" 
+                                style="padding: 10px; border: none; border-radius: 5px; background-color: #6c757d; color: white; cursor: pointer;">
+                            Back
+                        </button>
+                    </div>
+                        ${photos.length > 0 ? photos.slice(0, 3).map(photo => {
+                            const photoUrl = photo.getURI({maxWidth: 400, maxHeight: 400});
+                            return `<img src="${photoUrl}" alt="Photo of ${place.name}" 
+                                        style="width: 150px; 
+                                               height: 150px; 
+                                               padding: 5px; 
+                                               margin-bottom: 10px; 
+                                               border: 1px solid #ccc; 
+                                               border-radius: 4px; 
+                                               display: inline-block; 
+                                               vertical-align: top; 
+                                               object-fit: cover;" 
+                                        onerror="this.style.display='none';">`;
+                        }).join('') : 'No photos available.'}<br>
+                    <strong>Address:</strong> ${place.formattedAddress || 'N/A'}<br>
+                    <strong>Phone:</strong> ${place.nationalPhoneNumber || 'N/A'}<br>
+                    <strong>Rating:</strong> ${place.rating || 'N/A'}<br>
+                    <strong>Cuisines:</strong> ${cuisinesDisplay}<br>
+
+                    <strong>Reviews:</strong><br>
+                        ${place.reviews ? place.reviews.map(review => `
+                            <div class="review">
+                                <strong>${review.authorAttribution.displayName}</strong><br>
+                                Rating: ${review.rating}<br>
+                                ${review.text}<br><br>
+                            </div>
+                        `).join('') : 'No reviews available.'}
+                </div>`;
 
             // Show the sidebar
             document.getElementById('restaurant-info').style.display = 'block';
