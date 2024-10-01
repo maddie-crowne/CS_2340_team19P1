@@ -3,20 +3,22 @@
 <html>
 <head>
     <title>Restaurants in Atlanta</title>
-    <script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=places,geometry&callback=initMap" async defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=geometry&callback=initMap"
+            async defer></script>
     <script src="{% static 'favorites.js' %}"></script>
     <style>
         html, body {
             height: 100%;
             margin: 0;
         }
+
         #map {
             height: 100%;
             width: 70%;
             transition: all 0.3s;
             float: left;
         }
-        
+
         .header {
             background-color: #043D49;
             color: white;
@@ -27,47 +29,47 @@
             justify-content: center;
             position: relative; /* Allows us to position the button and logo */
         }
-        
+
         .header button {
             position: absolute;
             left: 30px; /* Aligns the button on the far left */
         }
-        
+
         .header h1 {
             text-align: center;
             margin: 0;
         }
-        
+
         .header img {
             position: absolute;
             right: 30px; /* Aligns the logo on the far right */
             height: 100px;
             margin-right: 15px;
         }
-        
+
         .search-section {
             width: 67%;
             border-radius: 8px;
             padding: 10px;
         }
-        
+
         .search-bar {
             width: 95%;
             border-radius: 8px;
             padding: 20px;
             background-color: #043D49;
         }
-        
+
         #search {
             border-radius: 5px;
             padding: 10px;
             width: 82%;
         }
-        
+
         #restaurant-info {
             display: none;
             height: 100%; /* Full height */
-            width: 30%;   /* 30% for the sidebar */
+            width: 30%; /* 30% for the sidebar */
             background-color: #f4f4f4;
             padding: 10px;
             margin-left: 10px;
@@ -78,8 +80,8 @@
             top: 0;
             right: 0;
             z-index: 1; /* Ensure sidebar is above the map */
-         }
-        
+        }
+
         #restaurant-title {
             font-size: 20px;
             margin-bottom: 0px;
@@ -89,11 +91,11 @@
             border-radius: 8px; /* Adds rounded corners */
             align-items: center;
         }
-        
+
         #restaurant-info {
             display: none;
             height: 100%; /* Full height */
-            width: 30%;   /* 30% for the sidebar */
+            width: 30%; /* 30% for the sidebar */
             background-color: #f4f4f4;
             padding: 10px;
             margin-left: 10px;
@@ -105,10 +107,10 @@
             right: 0;
             z-index: 1; /* Ensure sidebar is above the map */
         }
-        
+
         #sidebar {
             height: 100%; /* Full height */
-            width: 30%;   /* 30% for the sidebar */
+            width: 30%; /* 30% for the sidebar */
             background-color: #f4f4f4;
             padding: 10px;
             box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
@@ -119,14 +121,14 @@
             z-index: 1; /* Ensure sidebar is above the map */
             margin: 125px 0 0 0;
         }
-        
+
         #restaurant-list {
             padding: 20px;
         }
 
         /* Individual restaurant card styling */
         .restaurant-item {
-            cursor: pointer;           /* Pointer to indicate clickable */
+            cursor: pointer; /* Pointer to indicate clickable */
             position: relative;
             display: flex;
             background-color: #043D49; /* Card background color */
@@ -137,13 +139,13 @@
             margin-bottom: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
-        
+
         /* Hover effect for cards */
         .restaurant-item:hover {
             transform: translateY(-5px); /* Lift the card slightly on hover */
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* More pronounced shadow */
         }
-        
+
         /* Restaurant title style */
         .restaurant-item strong {
             font-size: 18px;
@@ -151,14 +153,14 @@
             display: block;
             margin-bottom: 5px;
         }
-        
+
         /* Additional information styling (e.g., rating, distance) */
         .restaurant-item p {
             margin: 5px 0;
             color: white; /* Sets text color to white */
             font-size: 15px;
         }
-        
+
         .search-button {
             background-color: white; /* Background color */
             color: black; /* Text color */
@@ -170,11 +172,11 @@
             float: right;
             transition: background-color 0.3s; /* Smooth background color transition */
         }
-        
+
         .search-button:hover {
             background-color: lightgrey; /* Darker background color on hover */
         }
-        
+
         .filter-button {
             background-color: white; /* Background color */
             color: black; /* Text color */
@@ -184,7 +186,7 @@
             cursor: pointer; /* Cursor changes to pointer on hover */
             margin-right: 10px; /* Space to the right */
         }
-        
+
         .filter-dropdown {
             background-color: #043D49; /* Background color for dropdown */
             padding: 10px; /* Padding */
@@ -202,17 +204,17 @@
             margin: 5px 0; /* Space around labels */
             color: white; /* Label color */
         }
-        
+
         #distance-filter {
             float: left;
             margin: 10px 20px;
         }
-        
+
         #rating-filter {
             float: right;
         }
-        
-        
+
+
     </style>
 </head>
 <body>
@@ -223,48 +225,48 @@
 </div>
 
 <div class="search-section">
-        <div class="search-bar">
-            <!-- Sandwich button for filters -->
-            <button class="filter-button" onclick="toggleFilters()">&#9776;</button>
-            
-            <!-- Filter dropdown (initially hidden) -->
-            <div id="filter-dropdown" class="filter-dropdown">
-                <div id="distance-filter">
-                    <label for="max-distance">Max Distance:</label>
-                    <select id="max-distance" name="max-distance">
-                        <option value="1609.34">1 mile</option>
-                        <option value="8046.72">5 miles</option>
-                        <option value="16093.4">10 miles</option>
-                        <option value="24140.2">15 miles</option>
-                    </select>
-                </div>
-                <div id="rating-filter">
-                    <label for="min-rating">Select Min Rating:</label>
-                    <select id="min-rating" name="min-rating">
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                    </select>
-                </div>
+    <div class="search-bar">
+        <!-- Sandwich button for filters -->
+        <button class="filter-button" onclick="toggleFilters()">&#9776;</button>
+
+        <!-- Filter dropdown (initially hidden) -->
+        <div id="filter-dropdown" class="filter-dropdown">
+            <div id="distance-filter">
+                <label for="max-distance">Max Distance:</label>
+                <select id="max-distance" name="max-distance">
+                    <option value="1609.34">1 mile</option>
+                    <option value="8046.72">5 miles</option>
+                    <option value="16093.4">10 miles</option>
+                    <option value="24140.2">15 miles</option>
+                </select>
             </div>
+            <div id="rating-filter">
+                <label for="min-rating">Select Min Rating:</label>
+                <select id="min-rating" name="min-rating">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+            </div>
+        </div>
         <input id="search" type="text" placeholder="Search for restaurants...">
         <button class="search-button" onclick="searchRestaurants()">Search</button>
         {% if user.is_authenticated %}
-                <a href="{% url 'googleMaps:account_info' %}">My Account</a>
-                
-                <button onclick="logout()">Logout</button>
-                
-                <script>
-                    function logout() {
-                        fetch('/googleMaps/logout/', {  // Ensure this points to the correct path
-                            method: 'POST',
-                            credentials: 'include',
-                            headers: {
-                                'X-CSRFToken': '{{ csrf_token }}' // Add this line
-                            }
-                        })
+            <a href="{% url 'googleMaps:account_info' %}">My Account</a>
+
+            <button onclick="logout()">Logout</button>
+
+            <script>
+                function logout() {
+                    fetch('/googleMaps/logout/', {  // Ensure this points to the correct path
+                        method: 'POST',
+                        credentials: 'include',
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}' // Add this line
+                        }
+                    })
                         .then(response => {
                             if (response.ok) {
                                 window.location.href = '/googleMaps'; // Redirect to the desired page
@@ -276,12 +278,12 @@
                             console.error('Error:', error);
                             alert('Logout failed. Please try again.');
                         });
-                    }
+                }
             </script>
-    
-            {% else %}
-                <a href="{% url 'auth:user_login' %}">Login</a>
-            {% endif %}
+
+        {% else %}
+            <a href="{% url 'auth:user_login' %}">Login</a>
+        {% endif %}
     </div>
 </div>
 
@@ -319,20 +321,20 @@
 
     // Initialize and add the map
     function initMap() {
-        var atlanta = { lat: 33.7490, lng: -84.3880 };
+        var atlanta = {lat: 33.7490, lng: -84.3880};
         map = new google.maps.Map(document.getElementById('map'), {
             zoom: 12,
             center: atlanta
         });
 
-        service = new google.maps.places.PlacesService(map);
+        //service = new google.maps.places.PlacesService(map);
 
         // Initial search for restaurants
         searchRestaurants();
     }
 
     if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function(position) {
+        navigator.geolocation.getCurrentPosition(function (position) {
             userLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
             new google.maps.Marker({
                 position: userLocation,
@@ -348,31 +350,31 @@
                 }
             });
             map.setCenter(userLocation);
-        }, function() {
+        }, function () {
             console.error("Geolocation failed.");
         });
     } else {
         console.error("Browser doesn't support Geolocation.");
     }
-    
-    
+
+
     function toggleFilters() {
         const dropdown = document.getElementById('filter-dropdown');
         // Toggle the display of the dropdown
         dropdown.style.display = dropdown.style.display === 'none' || dropdown.style.display === '' ? 'flex' : 'none';
     }
-    
+
     // Optional: Close dropdown if clicked outside
-    window.onclick = function(event) {
+    window.onclick = function (event) {
         const dropdown = document.getElementById('filter-dropdown');
         if (!event.target.matches('.filter-button') && !event.target.matches('#filter-dropdown') && dropdown.style.display === 'flex') {
             dropdown.style.display = 'none';
         }
     }
-    
+
 
     // Function to search for restaurants based on user input and filter
-    function searchRestaurants() {
+    async function searchRestaurants() {
         clearMarkers();
         clearSidebar();
         clearDirections();
@@ -382,45 +384,50 @@
         const maxDistance = parseFloat(document.getElementById('max-distance').value);
         const minRating = parseFloat(document.getElementById('min-rating').value);
 
+        const {Place} = await google.maps.importLibrary("places");
         const request = {
-            query: searchTerm,
-            fields: ['name', 'geometry', 'place_id', 'rating'],
-            type: ['restaurant']
+            textQuery: searchTerm,
+            fields: ["displayName", "location", "formattedAddress", "nationalPhoneNumber", 
+                        "rating", "photos", "types", "reviews"],
+            includedType: "restaurant",
+            locationBias: {lat: 37.7937, lng: -122.3965},
+            maxResultCount: 5,
+            minRating: minRating,
+            region: "us",
+            useStrictTypeFiltering: true,
         };
 
-        service.textSearch(request, function(results, status) {
-            if (status === google.maps.places.PlacesServiceStatus.OK) {
-                if (results.length === 0) {
-                    console.error("No restaurants found.");
-                    return;
-                }
-                results.forEach(place => {
-                    if (place.rating >= minRating) {
-                        const distance = google.maps.geometry.spherical.computeDistanceBetween(
-                            place.geometry.location,
-                            userLocation || map.getCenter()  // Use user's location or the center of the map
-                        );
+        const {places} = await Place.searchByText(request);
+        if (!places.length) {
+            console.error("No restaurants found.");
+        } else {
+            places.forEach(place => {
+                if (place.rating >= minRating) {
+                    const distance = google.maps.geometry.spherical.computeDistanceBetween(
+                        place.location,
+                        userLocation || map.getCenter()  // Use user's location or the center of the map
+                    );
 
-                        if (distance <= maxDistance) {
-                            createMarker(place);
-                            // Add restaurant to sidebar
-                        }
+                    if (distance <= maxDistance) {
+                        createMarker(place);
                     }
-                });
-            } else {
-                console.error("Search failed: " + status);
-            }
-        });
+                } else {
+                    console.error("Search failed: " + status);
+                }
+            });
+        }
     }
+
     function capitalizeFirstLetter(string) {
         if (typeof string !== 'string') return string; // Ensure it's a string
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
+
     // Function to create markers and add them to the map
     function createMarker(place) {
         const marker = new google.maps.Marker({
             map: map,
-            position: place.geometry.location
+            position: place.location
         });
 
         markers.push(marker);
@@ -429,87 +436,91 @@
         google.maps.event.addListener(marker, 'click', function () {
             clearDirections();
             back();
-            service.getDetails({placeId: place.place_id}, function (placeDetails, status) {
-                selectedPlace = placeDetails.geometry.location;
-                const photos = placeDetails.photos;
-                let cuisinesList = [];
-                const cuisines = [
-                    'Italian', 'Chinese', 'Mexican', 'Indian', 'Thai', 'Japanese',
-                    'American', 'Mediterranean', 'French', 'Greek', 'Vietnamese',
-                    'Spanish', 'Korean', 'BBQ', 'Seafood', 'Dessert', 'Vegetarian',
-                    'Middle Eastern', 'Himalayan', 'Cajun', 'Creole', 'Irish',
-                    'Turkish', 'Brazilian', 'Caribbean', 'African', 'Peruvian',
-                    'Filipino', 'Russian', 'Scottish', 'Dutch', 'German',
-                    'Polish', 'Hungarian', 'Swiss', 'Belgian', 'Austrian',
-                    'Norwegian', 'Danish', 'Finnish', 'Icelandic', 'Sri Lankan',
-                    'Malaysian', 'Indonesian', 'Singaporean', 'Laotian',
-                    'Cambodian', 'Mongolian', 'Somalian', 'Afghan', 'Tunisian',
-                    'Egyptian', 'Algerian', 'Jamaican', 'Puerto Rican',
-                    'Cuban', 'Haitian', 'Mexican-American', 'Tex-Mex', 'Vegan',
-                    'Fusion', 'Street Food', 'Comfort Food', 'Fast Food',
-                    'Cafe', 'Bar', 'Sushi', 'Taco', 'Soul Food', 'Deli',
-                    'Halal', 'Pizza',
-                ];
+            
+            selectedPlace = place.location;
+            const photos = place.photos;
+            
+            const allowedCuisines = [
+                'american_restaurant', 'bakery', 'bar', 'barbecue_restaurant', 
+                'brazilian_restaurant', 'breakfast_restaurant', 'brunch_restaurant', 
+                'cafe', 'chinese_restaurant', 'coffee_shop', 'fast_food_restaurant', 
+                'french_restaurant', 'greek_restaurant', 'hamburger_restaurant', 
+                'ice_cream_shop', 'indian_restaurant', 'indonesian_restaurant', 
+                'italian_restaurant', 'japanese_restaurant', 'korean_restaurant', 
+                'lebanese_restaurant', 'meal_delivery', 'meal_takeaway', 
+                'mediterranean_restaurant', 'mexican_restaurant', 'middle_eastern_restaurant', 
+                'pizza_restaurant', 'ramen_restaurant', 'sandwich_shop', 
+                'seafood_restaurant', 'spanish_restaurant', 'steak_house', 
+                'sushi_restaurant', 'thai_restaurant', 'turkish_restaurant', 
+                'vegan_restaurant', 'vegetarian_restaurant'
+            ];
+            
+            const cuisineNames = {
+                'american_restaurant': 'American', 'bakery': 'Bakery', 'bar': 'Bar', 
+                'barbecue_restaurant': 'Barbecue', 'brazilian_restaurant': 'Brazilian', 
+                'breakfast_restaurant': 'Breakfast', 'brunch_restaurant': 'Brunch', 
+                'cafe': 'Café', 'chinese_restaurant': 'Chinese', 'coffee_shop': 'Coffee Shop', 
+                'fast_food_restaurant': 'Fast Food', 'french_restaurant': 'French', 
+                'greek_restaurant': 'Greek', 'hamburger_restaurant': 'Hamburger', 
+                'ice_cream_shop': 'Ice Cream', 'indian_restaurant': 'Indian', 
+                'indonesian_restaurant': 'Indonesian', 'italian_restaurant': 'Italian', 
+                'japanese_restaurant': 'Japanese', 'korean_restaurant': 'Korean', 
+                'lebanese_restaurant': 'Lebanese', 'meal_delivery': 'Meal Delivery', 
+                'meal_takeaway': 'Meal Takeaway', 'mediterranean_restaurant': 'Mediterranean', 
+                'mexican_restaurant': 'Mexican', 'middle_eastern_restaurant': 'Middle Eastern', 
+                'pizza_restaurant': 'Pizza', 'ramen_restaurant': 'Ramen', 
+                'sandwich_shop': 'Sandwich', 'seafood_restaurant': 'Seafood', 
+                'spanish_restaurant': 'Spanish', 'steak_house': 'Steak House', 
+                'sushi_restaurant': 'Sushi', 'thai_restaurant': 'Thai', 
+                'turkish_restaurant': 'Turkish', 'vegan_restaurant': 'Vegan', 
+                'vegetarian_restaurant': 'Vegetarian'
+            };
+            
+            const selectedCuisines = place.types
+                .filter(type => allowedCuisines.includes(type))
+                .map(type => cuisineNames[type]);
+            
+            const cuisinesDisplay = selectedCuisines.length > 0 
+                ? selectedCuisines.join(', ') 
+                : 'Restaurant';
+            
+            //checkIfFavorited(place.id);
+            
+            document.getElementById('info').innerHTML = `
+                <strong>${place.displayName}</strong><br>
+                <button id="favorite-button" onclick="favoriteRestaurant('${place.id}')">
+                    ${favoriteState ? 'Unfavorite' : 'Favorite'}
+                </button><br>
+                <strong>Address:</strong> ${place.formattedAddress || 'N/A'}<br>
+                <strong>Phone:</strong> ${place.nationalPhoneNumber || 'N/A'}<br>
+                <strong>Rating:</strong> ${place.rating || 'N/A'}<br>
+                <strong>Cuisines:</strong> ${cuisinesDisplay}<br>
+                <strong>Photos:</strong><br>
+                    ${photos.length > 0 ? photos.slice(0, 3).map(photo => {
+                const photoUrl = photo.getURI({maxWidth: 400, maxHeight: 400});
+                return `<img src="${photoUrl}" alt="Photo of ${place.name}" style="width: 100%; max-width: 150px; height: auto; margin-bottom: 10px;" onerror="this.style.display='none';">`;}).join('') : 'No photos available.'}<br>
+                <strong>Reviews:</strong><br>
+                    ${place.reviews ? place.reviews.map(review => `
+                        <div>
+                            <strong>${review.authorAttribution.displayName}</strong><br>
+                            Rating: ${review.rating}<br>
+                            ${review.text}<br><br>
+                        </div>
+                    `).join('') : 'No reviews available.'}
+            `;
 
-                const atlantaLocation = {lat: 33.7490, lng: -84.3880};
-                checkIfFavorited(placeDetails.place_id);
-
-                const cuisinePromises = cuisines.map(cuisine => {
-                    return new Promise((resolve) => {
-                            resolve();
-                        });
-                    });
-
-                Promise.all(cuisinePromises).then(() => {
-                    // Fallback to types if no cuisines found
-                    const fallbackTypes = placeDetails.types.filter(type =>
-                        ['restaurant', 'bar', 'cafe'].includes(type)
-                    );
-
-                    const cuisinesOutput = cuisinesList.length > 0 ? cuisinesList.join(', ') :
-                        (fallbackTypes.length > 0 ? fallbackTypes.map(capitalizeFirstLetter).join(', ') : 'N/A');
-
-                    document.getElementById('info').innerHTML = `
-                        <strong>${placeDetails.name}</strong><br>
-                        <button id="favorite-button" onclick="favoriteRestaurant('${placeDetails.place_id}')">
-                            ${favoriteState ? 'Unfavorite' : 'Favorite'}
-                        </button><br>
-                        <strong>Address:</strong> ${placeDetails.formatted_address || 'N/A'}<br>
-                        <strong>Phone:</strong> ${placeDetails.formatted_phone_number || 'N/A'}<br>
-                        <strong>Rating:</strong> ${placeDetails.rating || 'N/A'}<br>
-                        <strong>Cuisines:</strong> ${cuisinesOutput}<br>
-                        <strong>Photos:</strong><br>
-                            ${photos.length > 0 ? photos.slice(0, 3).map(photo => {
-                        const photoUrl = photo.getUrl({maxWidth: 400, maxHeight: 400});
-                        return `
-                                    <img src="${photoUrl}" alt="Photo of ${placeDetails.name}" style="width: 100%; max-width: 150px; height: auto; margin-bottom: 10px;" onerror="this.style.display='none';">
-                                `;
-                    }).join('') : 'No photos available.'}<br>
-
-                        <strong>Reviews:</strong><br>
-                        ${placeDetails.reviews ? placeDetails.reviews.map(review => `
-                            <div>
-                                <strong>${review.author_name}</strong><br>
-                                Rating: ${review.rating}<br>
-                                ${review.text}<br><br>
-                            </div>
-                        `).join('') : 'No reviews available.'}
-                    `;
-
-                    // Show the sidebar
-                    document.getElementById('restaurant-info').style.display = 'block';
-                    document.getElementById('restaurant-info').style.width = '30%';
-                    document.getElementById('sidebar').style.display = 'none';
-                    document.getElementById('map').style.width = '70%';
-                    document.getElementById('get-directions-btn').style.display = 'block';
-                });
-
-            })
+            // Show the sidebar
+            document.getElementById('restaurant-info').style.display = 'block';
+            document.getElementById('restaurant-info').style.width = '30%';
+            document.getElementById('sidebar').style.display = 'none';
+            document.getElementById('map').style.width = '70%';
+            document.getElementById('get-directions-btn').style.display = 'block';
         });
     }
+
     function getDirections() {
         // Update the mode variable to get the latest value from the dropdown
-        document.getElementById("transportation-filter").addEventListener("change", function() {
+        document.getElementById("transportation-filter").addEventListener("change", function () {
             mode = this.value;
             console.log("Transportation mode changed to:", mode);
         });
@@ -531,7 +542,7 @@
             travelMode: google.maps.TravelMode[mode] // Use the mode directly
         };
 
-        directionsService.route(request, function(result, status) {
+        directionsService.route(request, function (result, status) {
             if (status === google.maps.DirectionsStatus.OK) {
                 directionsRenderer.setDirections(result);
             } else {
@@ -546,118 +557,102 @@
         const restaurantItem = document.createElement('div');
         restaurantItem.className = 'restaurant-item';
         restaurantItem.innerHTML = `
-            <strong>${place.name}</strong><br>
+            <strong>${place.displayName}</strong><br>
             Rating: ${place.rating || 'N/A'}<br>
              Distance: ${(Math.round(google.maps.geometry.spherical.computeDistanceBetween(
-                place.geometry.location,
-                userLocation || map.getCenter()
-            )) / 1609.34).toFixed(2)} miles`;
+            place.location,
+            userLocation || map.getCenter()
+        )) / 1609.34).toFixed(2)} miles`;
 
         // When clicking on the sidebar item, it simulates clicking the map marker
-       restaurantItem.addEventListener('click', function() {
+        restaurantItem.addEventListener('click', function () {
             clearDirections();
             back();
-            service.getDetails({ placeId: place.place_id }, function(placeDetails, status) {
-                selectedPlace = placeDetails.geometry.location;
-                const photos = placeDetails.photos;
-                let cuisinesList = [];
-                const cuisines = [
-                    'Italian', 'Chinese', 'Mexican', 'Indian', 'Thai', 'Japanese',
-                    'American', 'Mediterranean', 'French', 'Greek', 'Vietnamese',
-                    'Spanish', 'Korean', 'BBQ', 'Seafood', 'Dessert', 'Vegetarian',
-                    'Middle Eastern', 'Himalayan', 'Cajun', 'Creole', 'Irish', 
-                    'Turkish', 'Brazilian', 'Caribbean', 'African', 'Peruvian', 
-                    'Filipino', 'Russian', 'Scottish', 'Dutch', 'German', 
-                    'Polish', 'Hungarian', 'Swiss', 'Belgian', 'Austrian',
-                    'Norwegian', 'Danish', 'Finnish', 'Icelandic', 'Sri Lankan',
-                    'Malaysian', 'Indonesian', 'Singaporean', 'Laotian', 
-                    'Cambodian', 'Mongolian', 'Somalian', 'Afghan', 'Tunisian', 
-                    'Egyptian', 'Algerian', 'Jamaican', 'Puerto Rican', 
-                    'Cuban', 'Haitian', 'Mexican-American', 'Tex-Mex', 'Vegan',
-                    'Fusion', 'Street Food', 'Comfort Food', 'Fast Food', 
-                    'Cafe', 'Bar', 'Sushi', 'Taco', 'Soul Food', 'Deli',
-                    'Halal', 'Pizza',
-                ];
-                const atlantaLocation = { lat: 33.7490, lng: -84.3880 };
-                checkIfFavorited(placeDetails.place_id);
+            
+            selectedPlace = place.location;
+            const photos = place.photos;
+            
+            const allowedCuisines = [
+                'american_restaurant', 'bakery', 'bar', 'barbecue_restaurant', 
+                'brazilian_restaurant', 'breakfast_restaurant', 'brunch_restaurant', 
+                'cafe', 'chinese_restaurant', 'coffee_shop', 'fast_food_restaurant', 
+                'french_restaurant', 'greek_restaurant', 'hamburger_restaurant', 
+                'ice_cream_shop', 'indian_restaurant', 'indonesian_restaurant', 
+                'italian_restaurant', 'japanese_restaurant', 'korean_restaurant', 
+                'lebanese_restaurant', 'meal_delivery', 'meal_takeaway', 
+                'mediterranean_restaurant', 'mexican_restaurant', 'middle_eastern_restaurant', 
+                'pizza_restaurant', 'ramen_restaurant', 'sandwich_shop', 
+                'seafood_restaurant', 'spanish_restaurant', 'steak_house', 
+                'sushi_restaurant', 'thai_restaurant', 'turkish_restaurant', 
+                'vegan_restaurant', 'vegetarian_restaurant'
+            ];
+            
+            const cuisineNames = {
+                'american_restaurant': 'American', 'bakery': 'Bakery', 'bar': 'Bar', 
+                'barbecue_restaurant': 'Barbecue', 'brazilian_restaurant': 'Brazilian', 
+                'breakfast_restaurant': 'Breakfast', 'brunch_restaurant': 'Brunch', 
+                'cafe': 'Café', 'chinese_restaurant': 'Chinese', 'coffee_shop': 'Coffee Shop', 
+                'fast_food_restaurant': 'Fast Food', 'french_restaurant': 'French', 
+                'greek_restaurant': 'Greek', 'hamburger_restaurant': 'Hamburger', 
+                'ice_cream_shop': 'Ice Cream', 'indian_restaurant': 'Indian', 
+                'indonesian_restaurant': 'Indonesian', 'italian_restaurant': 'Italian', 
+                'japanese_restaurant': 'Japanese', 'korean_restaurant': 'Korean', 
+                'lebanese_restaurant': 'Lebanese', 'meal_delivery': 'Meal Delivery', 
+                'meal_takeaway': 'Meal Takeaway', 'mediterranean_restaurant': 'Mediterranean', 
+                'mexican_restaurant': 'Mexican', 'middle_eastern_restaurant': 'Middle Eastern', 
+                'pizza_restaurant': 'Pizza', 'ramen_restaurant': 'Ramen', 
+                'sandwich_shop': 'Sandwich', 'seafood_restaurant': 'Seafood', 
+                'spanish_restaurant': 'Spanish', 'steak_house': 'Steak House', 
+                'sushi_restaurant': 'Sushi', 'thai_restaurant': 'Thai', 
+                'turkish_restaurant': 'Turkish', 'vegan_restaurant': 'Vegan', 
+                'vegetarian_restaurant': 'Vegetarian'
+            };
+            
+            const selectedCuisines = place.types
+                .filter(type => allowedCuisines.includes(type))
+                .map(type => cuisineNames[type]);
+            
+            const cuisinesDisplay = selectedCuisines.length > 0 
+                ? selectedCuisines.join(', ') 
+                : 'Restaurant';
+            
+            //checkIfFavorited(place.id);
+            
+            document.getElementById('info').innerHTML = `
+                <strong>${place.displayName}</strong><br>
+                <button id="favorite-button" onclick="favoriteRestaurant('${place.id}')">
+                    ${favoriteState ? 'Unfavorite' : 'Favorite'}
+                </button><br>
+                <strong>Address:</strong> ${place.formattedAddress || 'N/A'}<br>
+                <strong>Phone:</strong> ${place.nationalPhoneNumber || 'N/A'}<br>
+                <strong>Rating:</strong> ${place.rating || 'N/A'}<br>
+                <strong>Cuisines:</strong> ${cuisinesDisplay}<br>
+                <strong>Photos:</strong><br>
+                    ${photos.length > 0 ? photos.slice(0, 3).map(photo => {
+                const photoUrl = photo.getURI({maxWidth: 400, maxHeight: 400});
+                return `<img src="${photoUrl}" alt="Photo of ${place.name}" style="width: 100%; max-width: 150px; height: auto; margin-bottom: 10px;" onerror="this.style.display='none';">`;}).join('') : 'No photos available.'}<br>
+                <strong>Reviews:</strong><br>
+                    ${place.reviews ? place.reviews.map(review => `
+                        <div>
+                            <strong>${review.authorAttribution.displayName}</strong><br>
+                            Rating: ${review.rating}<br>
+                            ${review.text}<br><br>
+                        </div>
+                    `).join('') : 'No reviews available.'}
+            `;
 
-                const cuisinePromises = cuisines.map(cuisine => {
-                    return new Promise((resolve) => {
-                        {#let request = {#}
-                        {#    location: atlantaLocation,#}
-                        {#    radius: '24141',#}
-                        {#    type: ['restaurant'],#}
-                        {#    keyword: cuisine#}
-                        {# };#}
-                        {##}
-                        {#service.nearbySearch(request, function(results, status) {#}
-                        {#    if (status === google.maps.places.PlacesServiceStatus.OK) {#}
-                        {#        const matchedResults = results.filter(result => #}
-                        {#            result.name.toLowerCase() === placeDetails.name.toLowerCase()#}
-                        {#        );#}
-                        {##}
-                        {#        const nameContainsCuisine = placeDetails.name.toLowerCase().includes(cuisine.toLowerCase());#}
-                        {##}
-                        {#        if (matchedResults.length > 0 || nameContainsCuisine) {#}
-                        {#            cuisinesList.push(cuisine);#}
-                        {#        }#}
-                        {#    }#}
-                            resolve();
-                        });
-                    });
-
-                Promise.all(cuisinePromises).then(() => {
-                    // Fallback to types if no cuisines found
-                    const fallbackTypes = placeDetails.types.filter(type => 
-                        ['restaurant', 'bar', 'cafe'].includes(type)
-                    );
-
-                    const cuisinesOutput = cuisinesList.length > 0 ? cuisinesList.join(', ') : 
-                        (fallbackTypes.length > 0 ? fallbackTypes.map(capitalizeFirstLetter).join(', ') : 'N/A');
-                console.log(placeDetails.name);
-                document.getElementById('info').innerHTML = `
-                       <strong>${placeDetails.name}</strong><br>
-                        <button id="favorite-button" onclick="favoriteRestaurant('${placeDetails.place_id}')">
-                            ${favoriteState ? 'Unfavorite' : 'Favorite'}
-                        </button><br>
-                       <strong>Address:</strong> ${placeDetails.formatted_address || 'N/A'}<br>
-                       <strong>Phone:</strong> ${placeDetails.formatted_phone_number || 'N/A'}<br>
-                       <strong>Rating:</strong> ${placeDetails.rating || 'N/A'}<br>
-                       <strong>Cuisines:</strong> ${cuisinesOutput}<br>
-                       <strong>Photos:</strong><br>
-                           ${photos.length > 0 ? photos.map(photo => {
-                    // Assuming you have a valid PlacesService instance
-                    const photoUrl = photo.getUrl({ maxWidth: 400, maxHeight: 400 });
-                    return `
-                                   <img src="${photoUrl}" alt="Photo of ${placeDetails.name}" style="width: 100%; max-width: 150px; height: auto; margin-bottom: 10px;" onerror="this.style.display='none';">
-                               `;
-                }).join('') : 'No photos available.'}<br>
-
-                       <strong>Reviews:</strong><br>
-                       ${placeDetails.reviews ? placeDetails.reviews.map(review => `
-                           <div>
-                               <strong>${review.author_name}</strong><br>
-                               Rating: ${review.rating}<br>
-                               ${review.text}<br><br>
-                           </div>
-                       `).join('') : 'No reviews available.'}
-                   `;
-
-                    // Show the sidebar
-                    //document.getElementById('sidebar').style.display = 'block';
-                document.getElementById('restaurant-info').style.display = 'block';
-                document.getElementById('restaurant-info').style.width = '30%';
-                document.getElementById('sidebar').style.width = '0%';
-                document.getElementById('map').style.width = '70%';
-                document.getElementById('get-directions-btn').style.display = 'block';
-            });
-            })
+            // Show the sidebar
+            document.getElementById('restaurant-info').style.display = 'block';
+            document.getElementById('restaurant-info').style.width = '30%';
+            document.getElementById('sidebar').style.display = 'none';
+            document.getElementById('map').style.width = '70%';
+            document.getElementById('get-directions-btn').style.display = 'block';
         });
 
         restaurantList.appendChild(restaurantItem);
         document.getElementById('sidebar').style.display = 'block';
     }
-    
+
     // Function to clear markers from the map
     function clearMarkers() {
         markers.forEach(marker => marker.setMap(null));
@@ -668,9 +663,11 @@
     function clearSidebar() {
         document.getElementById('restaurant-list').innerHTML = '';
     }
+
     function clearInfo() {
         document.getElementById('info').innerHTML = '';
     }
+
     function clearDirections() {
         if (directionsRenderer) {
             directionsRenderer.setMap(null);
@@ -680,7 +677,7 @@
 
     function back() {
         document.getElementById("sidebar").style.width = '30%';
-        document.getElementById("restaurant-info").style.width = '0%';
+        document.getElementById('restaurant-info').style.display = 'none';
         document.getElementById("info").innerHTML = '';
         // Set the center of the map to the user's location and reset the zoom
         if (userLocation) {
@@ -701,37 +698,37 @@
                 alert('You must be logged in to favorite a restaurant.');
                 return;
             }
-    
+
             const method = favoriteState ? 'DELETE' : 'POST'; // Change method based on state
             const endpoint = favoriteState ? `api/unfavorite/${placeId}/` : 'api/favorite/';
-    
+
             fetch(endpoint, {
                 method: method,
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRFToken': csrfToken, // Make sure csrfToken is defined
                 },
-                body: JSON.stringify({ placeId })
+                body: JSON.stringify({placeId})
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    favoriteState = !favoriteState; // Toggle favorite state
-                    updateFavoriteButton();
-                    alert(favoriteState ? 'Restaurant added to favorites!' : 'Restaurant removed from favorites!');
-                } else {
-                    alert('Error updating favorite status: ' + data.message);
-                }
-            })
-            .catch(error => console.error('Error:', error));
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        favoriteState = !favoriteState; // Toggle favorite state
+                        updateFavoriteButton();
+                        alert(favoriteState ? 'Restaurant added to favorites!' : 'Restaurant removed from favorites!');
+                    } else {
+                        alert('Error updating favorite status: ' + data.message);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
         });
     }
-    
+
     function updateFavoriteButton() {
         const button = document.getElementById('favorite-button'); // Adjust to your button's ID
         button.textContent = favoriteState ? 'Unfavorite' : 'Favorite';
     }
-    
+
     function checkIfFavorited(placeId) {
         fetch(`api/is_favorited/${placeId}/`) // Create an endpoint to check if a restaurant is favorited
             .then(response => response.json())
@@ -741,7 +738,7 @@
             })
             .catch(error => console.error('Error checking favorite state:', error));
     }
-    
+
 </script>
 
 </body>
