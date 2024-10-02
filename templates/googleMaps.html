@@ -331,6 +331,7 @@
         <div class="logo-title">
             <img src="{% static 'images/Logo.png' %}" alt="logo"> <!-- Replace with your logo URL -->
             <h1>ATLGrub</h1>
+            <img src="{% static 'images/Logo.png' %}" alt="logo">
         </div>
         <p>{% if user.is_authenticated %}
             <div class="account-logout">
@@ -541,7 +542,7 @@
                     createMarker(place);
                     // Center the map on the place's location
                     map.setCenter(place.location);
-                    map.setZoom(15);
+                    map.setZoom(18);
                     // Deletes address from URL
                     urlParams.delete('address');
                     window.history.replaceState({}, document.title, window.location.pathname + '' + urlParams.toString());
@@ -599,7 +600,7 @@
             clearDirections();
             back();
             map.setCenter(place.location);
-            map.setZoom(15);
+            map.setZoom(18);
 
             selectedPlace = place.location;
             const photos = place.photos;
@@ -774,7 +775,7 @@
             clearDirections();
             back();
             map.setCenter(place.location);
-            map.setZoom(15);
+            map.setZoom(18);
 
             selectedPlace = place.location;
             const photos = place.photos;

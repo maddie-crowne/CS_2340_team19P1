@@ -47,13 +47,8 @@ body, html {
 
 .atl-grub {
   color: #ffffff;
-  font-family: Mingzat, var(--default-font-family);
   font-size: 64px;
-  font-weight: 400;
-  line-height: 96px;
-  text-align: center;
-  white-space: nowrap;
-  letter-spacing: -0.7px;
+  font-weight: 700;
 }
 
 /* Back Button */
