@@ -118,25 +118,22 @@ body, html {
 
 /* Login Panel */
 .login-panel {
-  width: 900px; /* Increased width */
-  max-width: 90%; /* Responsive */
+  width: 900px; /* Maintains increased width */
   background: #ffffff;
   z-index: 2;
   overflow: hidden; /* Prevent scrolling */
   border-radius: 65px;
   padding: 20px;
-  margin-top: 15px;
-  margin-bottom: 15px;
+  box-sizing: border-box; /* Includes padding within height */
   display: flex;
   flex-direction: column;
-  align-items: stretch; /* Children stretch to full width */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  align-items: stretch; /* Allows children to stretch to full width */
+  margin: 0; /* Removes margin as Flexbox handles centering */
 }
-
 /* Login Title */
 .login-title {
   font-family: Mingzat, var(--default-font-family);
-  font-size: 32px; /* Adjusted font size */
+  font-size: 40px; /* Adjusted font size */
   font-weight: 400;
   color: #000000;
   text-align: center;
@@ -295,22 +292,6 @@ body, html {
       justify-content: center;
       align-items: center;
       padding-top: 145px; /* Accounts for the fixed title bar */
-  }
-
-  .login-panel {
-      width: 900px; /* Maintains increased width */
-      height: 629px; /* Fixed height */
-      background: #ffffff;
-      z-index: 2;
-      overflow: hidden; /* Prevent scrolling */
-      border-radius: 65px;
-      padding: 20px;
-      box-sizing: border-box; /* Includes padding within height */
-      display: flex;
-      flex-direction: column;
-      align-items: stretch; /* Allows children to stretch to full width */
-      justify-content: space-between; /* Distributes space evenly */
-      margin: 0; /* Removes margin as Flexbox handles centering */
   }
 
   .email-input,

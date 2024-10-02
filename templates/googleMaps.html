@@ -14,7 +14,7 @@
         }
         #map {
             height: 70%;
-            width: 70%;
+            width: 68%;
             margin-top: 0;
             transition: all 0.3s;
             float: left;
@@ -377,7 +377,7 @@
         <!-- Filter dropdown (initially hidden) -->
         <div id="filter-dropdown" class="filter-dropdown">
             <div id="distance-filter">
-                <label>Distance</label><br><br>
+                <label>Maximum Distance</label><br><br>
                 <input type="radio" id="1-mile" name="max-distance" value="1609.34">
                 <label for="1-mile">1 mile</label><br>
                 <input type="radio" id="5-miles" name="max-distance" value="8046.72">
@@ -389,7 +389,7 @@
             </div>
 
             <div id="rating-filter">
-                <label>Ratings</label><br><br>
+                <label>Minimum Rating</label><br><br>
                 <input type="radio" id="rating-1" name="min-rating" value="1">
                 <label for="rating-1">⭐</label><br>
                 <input type="radio" id="rating-2" name="min-rating" value="2">
@@ -439,12 +439,13 @@
     let directionsRenderer = null;
     let mode = document.getElementById("transportation-filter").value;
     let maxDistance = 24142;
+    let mapZoom = 14;
 
     // Initialize and add the map
     function initMap() {
         var atlanta = {lat: 33.7490, lng: -84.3880};
         map = new google.maps.Map(document.getElementById('map'), {
-            zoom: 12,
+            zoom: mapZoom,
             center: atlanta
         });
 
@@ -481,10 +482,10 @@
         dropdown.style.display = dropdown.style.display === 'none' || dropdown.style.display === '' ? 'flex' : 'none';
     }
 
-// Prevent dropdown from closing when clicking inside
-document.getElementById('filter-dropdown').addEventListener('click', function(event) {
-    event.stopPropagation(); // Prevent click event from bubbling up to the document listener
-});
+    // Prevent dropdown from closing when clicking inside
+    document.getElementById('filter-dropdown').addEventListener('click', function(event) {
+        event.stopPropagation(); // Prevent click event from bubbling up to the document listener
+    });
 
     // Function to search for restaurants based on user input and filter
     async function searchRestaurants() {
@@ -495,6 +496,20 @@ document.getElementById('filter-dropdown').addEventListener('click', function(ev
 
         const searchTerm = document.getElementById('search').value || "restaurant";
         const maxDistance = parseFloat(document.querySelector('input[name="max-distance"]:checked')?.value || Infinity);
+        if (maxDistance < 1700) {
+            mapZoom = 14;
+        } else if (maxDistance < 9000) {
+            mapZoom = 13;
+        } else if (maxDistance < 16500) {
+            mapZoom = 11;
+        } else if (maxDistance < 24500) {
+            mapZoom = 11;
+        } else {
+            mapZoom = 14;
+        }
+        
+        console.log(mapZoom)
+        map.setZoom(mapZoom);
         const minRating = parseFloat(document.querySelector('input[name="min-rating"]:checked')?.value || 1);
         let request = null;
 
@@ -668,7 +683,7 @@ document.getElementById('filter-dropdown').addEventListener('click', function(ev
                     <strong style="font-size: 16px;">Phone:</strong> <span style="font-size: 14px;">${place.nationalPhoneNumber || 'N/A'}</span><br>
                     <strong style="font-size: 16px;">Rating:</strong> <span style="font-size: 14px;">${place.rating || 'N/A'}</span><br>
                     <strong style="font-size: 16px;">Cuisines:</strong> <span style="font-size: 14px;">${cuisinesDisplay|| 'N/A'}</span><br>
-                    <br><br>
+                    <br>
                     <strong style="font-size: 16px;">Reviews</strong><br>
                     <br>
                     <div style="overflow-x: auto; display: flex;">
@@ -697,7 +712,7 @@ document.getElementById('filter-dropdown').addEventListener('click', function(ev
             document.getElementById('restaurant-info').style.display = 'block';
             document.getElementById('restaurant-info').style.width = '30%';
             document.getElementById('sidebar').style.display = 'none';
-            document.getElementById('map').style.width = '70%';
+            document.getElementById('map').style.width = '68%';
             document.getElementById('get-directions-btn').style.display = 'block';
         });
         
@@ -744,7 +759,7 @@ document.getElementById('filter-dropdown').addEventListener('click', function(ev
         restaurantItem.innerHTML = `
             <strong>${place.displayName}</strong>
             <div class="rating-distance">
-                <b class="gold-rating">Rating: </b><span>${place.rating || 'N/A'}</span><br>
+                <b class="gold-rating">Rating: </b><span>${place.rating || 'N/A'} ⭐</span><br>
                 <b>Distance:</b> ${(Math.round(google.maps.geometry.spherical.computeDistanceBetween(
                 place.location,
                 userLocation || map.getCenter()
@@ -874,7 +889,7 @@ document.getElementById('filter-dropdown').addEventListener('click', function(ev
             document.getElementById('restaurant-info').style.display = 'block';
             document.getElementById('restaurant-info').style.width = '30%';
             document.getElementById('sidebar').style.display = 'none';
-            document.getElementById('map').style.width = '70%';
+            document.getElementById('map').style.width = '68%';
             document.getElementById('get-directions-btn').style.display = 'block';
         });
 
@@ -910,10 +925,10 @@ document.getElementById('filter-dropdown').addEventListener('click', function(ev
         document.getElementById("info").innerHTML = '';
         // Set the center of the map to the user's location and reset the zoom
         if (userLocation) {
-            // Check if the current zoom is not 12 or the center is not the user's location
-            if (map.getZoom() !== 12 || !map.getCenter().equals(userLocation)) {
+            // Check if the current zoom is not correct or the center is not the user's location
+            if (map.getZoom() != mapZoom || !map.getCenter().equals(userLocation)) {
                 map.setCenter(userLocation); // Set the center to user's location
-                map.setZoom(12); // Reset the zoom level to 12
+                map.setZoom(mapZoom);
             }
         }
     }

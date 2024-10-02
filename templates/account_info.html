@@ -178,6 +178,20 @@
             color: #FFD700; /* Change text color on hover */
             transition: color 0.3s; /* Smooth transition */
         }
+        
+        .account-info p {
+            font-size: 20px; /* Adjusted font size for account info */
+        }
+        
+        .name {
+            font-size: 25px;
+            font-weight: bold;
+        }
+        
+        .header h2 {
+            font-size: 40px;
+        }
+
 
     </style>
 </head>
@@ -203,7 +217,7 @@
                             <div>
                                 <h3>{{ favorite.name }}</h3>
                                 <p>{{ favorite.address }}</p>
-                                <div class = "star-rating"><strong>Rating:</strong> {{ favorite.rating }} </div>
+                                <div class = "star-rating"><strong>Rating:</strong> {{ favorite.rating }} ⭐</div>
                             </div>
                         </a>
                         <img src="{{ favorite.picture_url }}" alt="{{ favorite.name }}" style="max-width: 100%; height: auto;">
@@ -215,7 +229,7 @@
         </div>
     
         <div class="account-details">
-            <h2>Account Details</h2>
+            <h1>Account Details</h1>
             <img src="{% static 'images/account.png' %}" alt="logo" class="account-avatar">
             <div class="name">
                 <p><span class="info-label"></span> {{ user.first_name }} {{ user.last_name }}</p>
