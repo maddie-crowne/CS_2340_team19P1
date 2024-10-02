@@ -495,7 +495,7 @@
         clearDirections();
         back();
 
-        const searchTerm = document.getElementById('search').value || "restaurant";
+        const searchTerm = document.getElementById('search').value || "restaurant Atlanta";
         const maxDistance = parseFloat(document.querySelector('input[name="max-distance"]:checked')?.value || Infinity);
         if (maxDistance < 1700) {
             mapZoom = 14;
