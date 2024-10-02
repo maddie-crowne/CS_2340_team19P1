@@ -520,7 +520,8 @@
         const addressFromUrl = urlParams.get('address');
         const formattedAddress = addressFromUrl ? decodeURIComponent(addressFromUrl) : null;
 
-        if (formattedAddress) { // Search for favorite
+        // Search for favorite
+        if (formattedAddress) {
             request = {
                 textQuery: formattedAddress,
                 fields: ["displayName", "location", "formattedAddress", "nationalPhoneNumber",
@@ -546,8 +547,10 @@
                     window.history.replaceState({}, document.title, window.location.pathname + '' + urlParams.toString());
                 });
             }
-
-        } else { // Search for what is in the search bar or "restaurant" if search bar empty
+        } 
+        
+        // Search for what is in the search bar or "restaurant" if search bar empty
+        else { 
             request = {
                 textQuery: searchTerm,
                 fields: ["displayName", "location", "formattedAddress", "nationalPhoneNumber",
