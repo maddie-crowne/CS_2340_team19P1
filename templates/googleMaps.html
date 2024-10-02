@@ -10,48 +10,108 @@
         html, body {
             height: 100%;
             margin: 0;
-            font-family: 'Inter', sans-serif; /* Font style */
+            font-family: 'Inter', sans-serif;
         }
-
         #map {
-            height: 70%;
+            height: 100%;
             width: 70%;
+            margin-top: 0;
             transition: all 0.3s;
             float: left;
         }
-
-        .header {
+        .title-bar {
+            align-items: center;
             background-color: #043D49;
+            max-height: 150px;
+        }
+        .header {
             color: white;
-            padding: 30px;
+            text-align: center;
             font-size: 28px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            position: relative; /* Allows us to position the button and logo */
+            justify-content: space-between;
+            margin-left: 15px;
+            margin-right: 15px;
         }
-
-        .header button {
-            position: absolute;
-            left: 30px; /* Aligns the button on the far left */
+        .logo-title {
+            display: flex;
+            margin-left: auto;
+            margin-right: auto;
+            align-items: center;
+            justify-content: center;
         }
 
         .header h1 {
             text-align: center;
             margin: 0;
         }
-
-        .header img {
-            position: absolute;
-            right: 30px; /* Aligns the logo on the far right */
-            height: 100px;
-            margin-right: 15px;
+        .logo-title img {
+            height: 150px;
+            width: 150px;
+            margin-right: 10px;
+        }
+        .header p {
+            margin: 0;
+        }
+        .header a, #logout-button {
+             /* Button color */
+            color: white; /* Button text color */
+            border: none; /* No border */
+            border-radius: 4px; /* Rounded corners */
+            cursor: pointer; /* Pointer cursor on hover */
+            text-decoration: none;
+            margin-left: 20px;
+        }
+        .account-logout {
+            text-align: left;
+            justify-content: left;
+            display: flex;
+            flex-direction: column;
+        }
+        #logout-button {
+            background: none;
+            text-decoration: none;
+            color: white;
+        }
+        #logout-button:hover {
+            color: lightgrey;
+        }
+        .account-logout a {
+            text-align: left;
+            justify-content: left;
+            padding: 5px;
+            font-size: 18px;
+        }
+        .account-logout a:hover {
+            color: lightgrey;
+        }
+        .header a {
+            font-size: 18px;
+        }
+        .header a:hover {
+            color: lightgrey;
+            cursor: pointer;
+        }
+        .header a img {
+            width: 75px;
+            height: 75px;
+        }
+        .header a img:hover {
+            border: 1px #006466;
+            cursor: pointer;
+        }
+        #logout-button {
+            justify-content: left;
+            padding: 5px;
+            
         }
 
         .search-section {
             width: 67%;
             border-radius: 8px;
             padding: 10px;
+            margin-bottom: 0;
         }
 
         .search-bar {
@@ -59,6 +119,7 @@
             border-radius: 8px;
             padding: 20px;
             background-color: #043D49;
+            margin-bottom: 0;
         }
 
         #search {
@@ -73,7 +134,7 @@
             width: 30%; /* 30% for the sidebar */
             background-color: #f4f4f4;
             margin-left: 10px;
-            margin-top: 125px;
+            margin-top: 150px;
             box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
             overflow-y: auto; /* Scroll if content overflows */
             position: absolute;
@@ -89,9 +150,9 @@
             margin-bottom: 0px;
             background: #043D49;
             padding: 1px 20px;
-            color: white;
             border-radius: 8px; /* Adds rounded corners */
             align-items: center;
+            color: white;
         }
 
         #sidebar {
@@ -105,7 +166,7 @@
             top: 0;
             right: 0;
             z-index: 1; /* Ensure sidebar is above the map */
-            margin: 125px 0 0 0;
+            margin: 150px 0 0 0;
         }
 
         #restaurant-list {
@@ -114,8 +175,10 @@
 
         /* Individual restaurant card styling */
         .restaurant-item {
+            color: white;
+            justify-content: space-between;
+            align-items: center;
             cursor: pointer; /* Pointer to indicate clickable */
-            position: relative;
             display: flex;
             background-color: #043D49; /* Card background color */
             border-radius: 8px;
@@ -136,7 +199,6 @@
         .restaurant-item strong {
             font-size: 18px;
             color: white;
-            display: block;
             margin-bottom: 5px;
         }
 
@@ -145,6 +207,15 @@
             margin: 5px 0;
             color: white; /* Sets text color to white */
             font-size: 15px;
+        }
+        .rating-distance {
+            font-size: 12px;
+            right: auto;
+            margin-left: 15px;
+            text-align: right;
+        }
+        .rating-distance .gold-rating {
+            color: gold;
         }
 
         .search-button {
@@ -224,17 +295,52 @@
             border-radius: 4px; /* Rounded corners for images */
             margin-bottom: 10px; /* Space below images */
         }
-
-
     </style>
 </head>
 <body>
-<div class="header">
-    <button class="back-button">Back</button>
-    <img src="Logo.png" alt="Logo" width="1332" height="1500"> <!-- Replace with your logo URL -->
-    <h1>ATLGrub</h1>
-</div>
+<div class="title-bar">
+    <div class="header">
+        <div class="logo-title">
+            <img src="{% static 'images/logo.png' %}" alt="logo"> <!-- Replace with your logo URL -->
+            <h1>ATLGrub</h1>
+        </div>
+        <p>{% if user.is_authenticated %}
+            <div class="account-logout">
+                <a href="{% url 'googleMaps:account_info' %}">My Account</a>
+                <button id = "logout-button" onclick="logout()">Logout</button>
+            </div>
+                <a href="{% url 'googleMaps:account_info' %}">
+                    <img src="{% static 'images/account.png' %}" alt="account">
+                </a>
 
+                <script>
+                    function logout() {
+                        fetch('/googleMaps/logout/', {  // Ensure this points to the correct path
+                            method: 'POST',
+                            credentials: 'include',
+                            headers: {
+                                'X-CSRFToken': '{{ csrf_token }}' // Add this line
+                            }
+                        })
+                            .then(response => {
+                                if (response.ok) {
+                                    window.location.href = '/googleMaps'; // Redirect to the desired page
+                                } else {
+                                    alert('Logout failed. Please try again.');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                alert('Logout failed. Please try again.');
+                            });
+                    }
+                </script>
+
+            {% else %}
+                <a href="{% url 'auth:user_login' %}">Login</a>
+            {% endif %}
+    </div>
+</div>
 <div class="search-section">
     <div class="search-bar">
         <!-- Sandwich button for filters -->
@@ -268,43 +374,11 @@
         </div>
         <input id="search" type="text" placeholder="Search for restaurants...">
         <button class="search-button" onclick="searchRestaurants()">Search</button>
-        {% if user.is_authenticated %}
-            <a href="{% url 'googleMaps:account_info' %}">My Account</a>
-
-            <button onclick="logout()">Logout</button>
-
-            <script>
-                function logout() {
-                    fetch('/googleMaps/logout/', {  // Ensure this points to the correct path
-                        method: 'POST',
-                        credentials: 'include',
-                        headers: {
-                            'X-CSRFToken': '{{ csrf_token }}' // Add this line
-                        }
-                    })
-                        .then(response => {
-                            if (response.ok) {
-                                window.location.href = '/googleMaps'; // Redirect to the desired page
-                            } else {
-                                alert('Logout failed. Please try again.');
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            alert('Logout failed. Please try again.');
-                        });
-                }
-            </script>
-
-        {% else %}
-            <a href="{% url 'auth:user_login' %}">Login</a>
-        {% endif %}
     </div>
 </div>
 
 <div id="restaurant-info">
-    <h2>Restaurant Info</h2>
-    <button onclick="searchRestaurants()">Back</button>
+    <h2></h2>
     <div id="info">Click on a marker to see details!</div>
     <button id="get-directions-btn" style="display: none;" onclick="getDirections()">Get Directions</button>
     <select id="transportation-filter">
@@ -369,13 +443,17 @@
     } else {
         console.error("Browser doesn't support Geolocation.");
     }
-
-
+    
     function toggleFilters() {
         const dropdown = document.getElementById('filter-dropdown');
         // Toggle the display of the dropdown
         dropdown.style.display = dropdown.style.display === 'none' || dropdown.style.display === '' ? 'flex' : 'none';
     }
+
+// Prevent dropdown from closing when clicking inside
+document.getElementById('filter-dropdown').addEventListener('click', function(event) {
+    event.stopPropagation(); // Prevent click event from bubbling up to the document listener
+});
 
     // Function to search for restaurants based on user input and filter
     async function searchRestaurants() {
@@ -385,8 +463,8 @@
         back();
 
         const searchTerm = document.getElementById('search').value || "restaurant";
-        const maxDistance = parseFloat(document.querySelector('input[name="max-distance"]:checked').value);
-        const minRating = parseFloat(document.querySelector('input[name="min-rating"]:checked').value);
+        const maxDistance = parseFloat(document.querySelector('input[name="max-distance"]:checked')?.value || Infinity);
+        const minRating = parseFloat(document.querySelector('input[name="min-rating"]:checked')?.value || 1);
         let request = null;
 
         const {Place} = await google.maps.importLibrary("places");
@@ -430,7 +508,7 @@
                     "rating", "photos", "types", "reviews"],
                 includedType: "restaurant",
                 locationBias: userLocation,
-                maxResultCount: 3,
+                maxResultCount: 20,
                 minRating: minRating,
                 region: "us",
                 useStrictTypeFiltering: true,
@@ -445,7 +523,6 @@
                         place.location,
                         userLocation || map.getCenter()  // Use user's location or the center of the map
                     );
-
                     if (distance <= maxDistance) {
                         createMarker(place);
                     }
@@ -472,6 +549,8 @@
         google.maps.event.addListener(marker, 'click', function () {
             clearDirections();
             back();
+            map.setCenter(place.location);
+            map.setZoom(15);
 
             selectedPlace = place.location;
             const photos = place.photos;
@@ -515,7 +594,6 @@
             const selectedCuisines = place.types
                 .filter(type => allowedCuisines.includes(type))
                 .map(type => cuisineNames[type]);
-
             const cuisinesDisplay = selectedCuisines.length > 0
                 ? selectedCuisines.join(', ')
                 : 'Restaurant';
@@ -556,9 +634,9 @@
                     </div>
                     <br>
                     <strong style="font-size: 16px;">Address:</strong> <span style="font-size: 14px;">${place.formattedAddress || 'N/A'}</span><br>
-                    <strong style="font-size: 16px;">Phone:</strong> <span style="font-size: 14px;">${place.nationalPhoneNumber || 'N/A'}</span>
-                    <strong style="font-size: 16px;">Rating:</strong> <span style="font-size: 14px;">${place.rating || 'N/A'}</span>
-                    <strong style="font-size: 16px;">Cuisines:</strong> <span style="font-size: 14px;">${cuisinesDisplay|| 'N/A'}</span><
+                    <strong style="font-size: 16px;">Phone:</strong> <span style="font-size: 14px;">${place.nationalPhoneNumber || 'N/A'}</span><br>
+                    <strong style="font-size: 16px;">Rating:</strong> <span style="font-size: 14px;">${place.rating || 'N/A'}</span><br>
+                    <strong style="font-size: 16px;">Cuisines:</strong> <span style="font-size: 14px;">${cuisinesDisplay|| 'N/A'}</span><br>
                     <br><br>
                     <strong style="font-size: 16px;">Reviews</strong><br>
                     <br>
@@ -633,17 +711,21 @@
         const restaurantItem = document.createElement('div');
         restaurantItem.className = 'restaurant-item';
         restaurantItem.innerHTML = `
-            <strong>${place.displayName}</strong><br>
-            Rating: ${place.rating || 'N/A'}<br>
-             Distance: ${(Math.round(google.maps.geometry.spherical.computeDistanceBetween(
-            place.location,
-            userLocation || map.getCenter()
-        )) / 1609.34).toFixed(2)} miles`;
+            <strong>${place.displayName}</strong>
+            <div class="rating-distance">
+                <b class="gold-rating">Rating: </b><span>${place.rating || 'N/A'}</span><br>
+                <b>Distance:</b> ${(Math.round(google.maps.geometry.spherical.computeDistanceBetween(
+                place.location,
+                userLocation || map.getCenter()
+            )) / 1609.34).toFixed(2)} miles
+            </div>`;
 
         // When clicking on the sidebar item, it simulates clicking the map marker
         restaurantItem.addEventListener('click', function () {
             clearDirections();
             back();
+            map.setCenter(place.location);
+            map.setZoom(15);
 
             selectedPlace = place.location;
             const photos = place.photos;
@@ -712,7 +794,7 @@
                     </div>
                     <div style="overflow: auto; white-space: nowrap;">
                         ${photos.length > 0 ? photos.slice(0, 3).map(photo => {
-                            const photoUrl = photo.getURI({maxWidth: 400, maxHeight: 400});
+                            const photoUrl = photo.getURI({maxWidth: 300, maxHeight: 400});
                             return `<img src="${photoUrl}" alt="Photo of ${place.name}"
                                         style="width: 150px;
                                                height: 150px;
@@ -728,9 +810,9 @@
                     </div>
                     <br>
                     <strong style="font-size: 16px;">Address:</strong> <span style="font-size: 14px;">${place.formattedAddress || 'N/A'}</span><br>
-                    <strong style="font-size: 16px;">Phone:</strong> <span style="font-size: 14px;">${place.nationalPhoneNumber || 'N/A'}</span>
-                    <strong style="font-size: 16px;">Rating:</strong> <span style="font-size: 14px;">${place.rating || 'N/A'}</span>
-                    <strong style="font-size: 16px;">Cuisines:</strong> <span style="font-size: 14px;">${cuisinesDisplay|| 'N/A'}</span><
+                    <strong style="font-size: 16px;">Phone:</strong> <span style="font-size: 14px;">${place.nationalPhoneNumber || 'N/A'}</span><br>
+                    <strong style="font-size: 16px;">Rating:</strong> <span style="font-size: 14px;">${place.rating || 'N/A'}</span><br>
+                    <strong style="font-size: 16px;">Cuisines:</strong> <span style="font-size: 14px;">${cuisinesDisplay|| 'N/A'}</span><br>
                     <br><br>
                     <strong style="font-size: 16px;">Reviews</strong><br>
                     <br>
@@ -743,13 +825,14 @@
                                                        border: 1px solid #ccc; 
                                                        background-color: #004d4f; 
                                                        border-radius: 8px; 
+                                                       max-width: 300px;
+                                                       min-width: 200px;
                                                        max-height: 250px;
-                                                       min-width: 350px;
                                                        word-wrap: break-word; /* Ensures words wrap */
                                                        overflow-wrap: break-word;
                                                        overflow-y: auto;">
-                                <strong style="font-size: 20px; color: white;">${review.authorAttribution.displayName}</strong><br><br>
-                                Rating: ${review.rating} ⭐<br>
+                                <strong style="font-size: 18px; color: white;">${review.authorAttribution.displayName}</strong><br><br>
+                                <b>Rating:</b> ${review.rating} ⭐<br>
                                 ${review.text}<br><br>
                             </div>
                         `).join('') : 'No reviews available.'}
@@ -855,6 +938,5 @@
     }
 
 </script>
-
 </body>
 </html>
