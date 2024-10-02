@@ -26,16 +26,19 @@
             align-self: center;
         }
         .back-button {
-            background: white;
+            position: absolute;
+            top: 44px;
+            left: 94.415px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 75px;
+            height: 50px;
+            background: #e6e6e6;
             border: none;
-            border-radius: 5px;
-            padding: 5px;
-            color: var(--text-color);
-            margin: 25px;
-            text-align: center;
-            cursor: pointer;
+            border-radius: 8px;
             font-size: 18px;
-            height: 25px;
+            cursor: pointer;
         }
         .back-button a {
             color: #1e1e1e;
@@ -43,12 +46,12 @@
             font-family: Inter, var(--default-font-family);
             font-size: 16px;
             font-weight: 400;
-            line-height: 16px;
+            line-height: 16px;  
         }
         .header {
             color: white;
             text-align: center;
-            background-color: #002b2d;
+            background-color: #043D49;
             display: flex;
             justify-content: center;
             width: 100%;
@@ -73,16 +76,17 @@
             width: 100%;
             background-color: #FFFFFF;
             border-right: 1px solid #DDDDDD;
+            border-radius: 5px;
             overflow-y: auto;
             height: 100%;
             justify-content: flex-start; /* Align children to the top */
         }
         .fav-header {
             font-size: 16px;
-            background-color: #004d4f;
+            background-color: #043D49;
             border-radius: 8px;
             margin-bottom: 15px;
-            margin-top: 15px;
+            
             padding: 5px;
             justify-content: center;
             text-align: center;
@@ -93,7 +97,7 @@
             width: 60%;
         }
         .restaurant-card {
-            background-color: #004d4f;
+            background-color: #043D49;
             border: 1px solid #DDDDDD;
             border-radius: 8px;
             margin-bottom: 15px;
@@ -131,7 +135,7 @@
         }
         .account-details {
             flex: 1; /* Maintain width of account details section */
-            background-color: #004d4f; /* Account details section color */
+            background-color: #043D49; /* Account details section color */
             border-left: 1px solid var(--text-color);
             color: white;
             display: flex;
@@ -197,7 +201,7 @@
                             <div>
                                 <h3>{{ favorite.name }}</h3>
                                 <p>{{ favorite.address }}</p>
-                                <div class = "star-rating">Rating: {{ favorite.rating }} ⭐</div>
+                                <div class = "star-rating"><strong>Rating:</strong> {{ favorite.rating }} </div>
                             </div>
                         </a>
                         <img src="{{ favorite.picture_url }}" alt="{{ favorite.name }}" style="max-width: 100%; height: auto;">
@@ -220,5 +224,8 @@
             </div>
         </div>
     </div>
+<script>
+    
+</script>
 </body>
 </html>
