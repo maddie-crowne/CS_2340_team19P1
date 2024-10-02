@@ -296,6 +296,32 @@
             border-radius: 4px; /* Rounded corners for images */
             margin-bottom: 10px; /* Space below images */
         }
+
+        #get-directions-btn {
+            display: none; 
+            float: left; 
+            margin-right: 15px;
+            padding: 10px; 
+            border: none; 
+            border-radius: 5px; 
+            background-color: #004d4f; 
+            color: white; 
+            cursor: pointer;
+        }
+        
+        #transportation-filter {
+            margin-right: 15px;
+            padding: 10px; 
+            border: none; 
+            border-radius: 5px; 
+            background-color: white; 
+            color: black; 
+            cursor: pointer;
+            width: 20%;
+        }
+        
+
+        
     </style>
 </head>
 <body>
@@ -381,12 +407,15 @@
 <div id="restaurant-info">
     <h2></h2>
     <div id="info">Click on a marker to see details!</div>
-    <button id="get-directions-btn" style="display: none;" onclick="getDirections()">Get Directions</button>
-    <select id="transportation-filter">
-        <option value="DRIVING">Driving</option>
-        <option value="WALKING">Walking</option>
-        <option value="BICYCLING">Bicycling</option>
-    </select>
+    <div style="width: 100%;">
+        <button id="get-directions-btn" onclick="getDirections()">Get Directions</button>
+        <select id="transportation-filter">
+            <option value="DRIVING">Driving</option>
+            <option value="WALKING">Walking</option>
+            <option value="BICYCLING">Bicycling</option>
+        </select>
+    </div>
+    <br><br>
 </div>
 <br><br>
 
