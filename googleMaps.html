@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Restaurants in Atlanta</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=places&callback=initMap" async defer></script>
+    <style>
+        /* Set the size of the map */
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        #map {
+            height: 100%; /* Full height */
+            width: 100%;  /* Full width */
+            transition: all 0.3s; /* Smooth transition for sidebar */
+        }
+        #sidebar {
+            display: none; /* Hidden by default */
+            height: 100%; /* Full height */
+            width: 30%;   /* 30% for the sidebar */
+            background-color: #f4f4f4;
+            padding: 10px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+            overflow-y: auto; /* Scroll if content overflows */
+            position: absolute;
+            top: 0;
+            right: 0;
+            z-index: 1; /* Ensure sidebar is above the map */
+        }
+    </style>
+</head>
+<body>
+
+    <div style="padding: 10px;">
+        <input id="search-bar" type="text" placeholder="Search for restaurants...">
+        <select id="filter-dropdown">
+            <option value="restaurant">All Restaurants</option>
+            <option value="cafe">Cafes</option>
+            <option value="bar">Bars</option>
+            <option value="meal_takeaway">Takeaway</option>
+        </select>
+        <button onclick="searchRestaurants()">Search</button>
+    </div>
+    
+<div id="map"></div>
+<div id="sidebar">
+    <h2>Restaurant Info</h2>
+    <div id="info">Click on a marker to see details!</div>
+</div>
+
+<script>
+    // Initialize and add the map
+    let map;
+    let service;
+    let markers = [];
+
+    // Initialize and add the map
+    function initMap() {
+        var atlanta = { lat: 33.7490, lng: -84.3880 };
+        map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 12,
+            center: atlanta
+        });
+
+        // Create a PlacesService object
+        service = new google.maps.places.PlacesService(map);
+
+        // Initial search for all restaurants
+        searchRestaurants();
+    }
+
+    // Function to search for restaurants based on user input and filter
+    function searchRestaurants() {
+        // Clear existing markers
+        clearMarkers();
+
+        // Get user input and selected filter
+        const searchTerm = document.getElementById('search-bar').value || 'restaurants in Atlanta';
+        const filter = document.getElementById('filter-dropdown').value;
+
+        // Define the request for restaurants in Atlanta with filter
+        const request = {
+            query: searchTerm,
+            fields: ['name', 'geometry', 'place_id', 'types'],
+            type: filter
+        };
+
+        // Perform the text search
+        service.textSearch(request, function(results, status) {
+            if (status === google.maps.places.PlacesServiceStatus.OK) {
+                results.forEach(place => createMarker(place));
+            }
+        });
+    }
+
+    // Function to create markers and add them to the map
+    function createMarker(place) {
+        const marker = new google.maps.Marker({
+            map: map,
+            position: place.geometry.location
+        });
+
+        markers.push(marker);
+
+        // Add click event to marker
+        google.maps.event.addListener(marker, 'click', function() {
+            // Fetch detailed information about the place
+            service.getDetails({ placeId: place.place_id }, function(placeDetails, status) {
+                if (status === google.maps.places.PlacesServiceStatus.OK) {
+                    // Filter and display relevant cuisine types
+                    const cuisineTypes = placeDetails.types.filter(type =>
+                        ['restaurant', 'cafe', 'bar', 'meal_takeaway'].includes(type)
+                    );
+
+                    // Set the content of the sidebar with detailed info
+                    document.getElementById('info').innerHTML = `
+                        <strong>${placeDetails.name}</strong><br>
+                        <strong>Address:</strong> ${placeDetails.formatted_address || 'N/A'}<br>
+                        <strong>Phone:</strong> ${placeDetails.formatted_phone_number || 'N/A'}<br>
+                        <strong>Cuisine:</strong> ${cuisineTypes.length > 0 ? cuisineTypes.join(', ') : 'N/A'}<br>
+                        <strong>Rating:</strong> ${placeDetails.rating || 'N/A'}<br>
+                        <strong>Reviews:</strong><br>
+                        ${placeDetails.reviews ? placeDetails.reviews.map(review => `
+                            <div>
+                                <strong>${review.author_name}</strong><br>
+                                Rating: ${review.rating}<br>
+                                ${review.text}<br><br>
+                            </div>
+                        `).join('') : 'No reviews available.'}
+                    `;
+
+                    // Show the sidebar
+                    document.getElementById('sidebar').style.display = 'block';
+                    document.getElementById('map').style.width = '70%'; // Reduce map width
+                }
+            });
+        });
+    }
+    function clearMarkers() {
+        markers.forEach(marker => marker.setMap(null));
+        markers = [];
+    }
+
+</script>
+
+</body>
+</html>
